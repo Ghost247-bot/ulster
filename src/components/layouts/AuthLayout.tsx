@@ -1,8 +1,12 @@
 import { Outlet } from 'react-router-dom';
 import { LandmarkIcon } from 'lucide-react';
 import BackToTop from '../ui/BackToTop';
+import { useAutoLogout } from '../../hooks/useAutoLogout';
 
 const AuthLayout = () => {
+  // Initialize auto logout
+  useAutoLogout();
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <header className="bg-white shadow-sm">
