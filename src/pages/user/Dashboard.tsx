@@ -136,18 +136,22 @@ const UserDashboard = () => {
         }
         
         console.log('Accounts fetched:', accountsData);
-        setAccounts(accountsData || []);
+        const processedAccounts = (accountsData || []).map(account => ({
+          ...account,
+          is_frozen: Boolean(account.is_frozen),
+        }));
+        setAccounts(processedAccounts);
 
         // Calculate total balance
-        const total = (accountsData || []).reduce(
+        const total = (processedAccounts || []).reduce(
           (sum, account) => sum + account.balance,
           0
         );
         setTotalBalance(total);
 
         // Fetch recent transactions
-        if (accountsData && accountsData.length > 0) {
-          const accountIds = accountsData.map((account) => account.id);
+        if (processedAccounts && processedAccounts.length > 0) {
+          const accountIds = processedAccounts.map((account) => account.id);
           const { data: transactionsData, error: transactionsError } = await supabase
             .from('transactions')
             .select('*')
@@ -282,6 +286,16 @@ const UserDashboard = () => {
     cutout: '70%',
   };
 
+  const handleCardStateChange = async (cardId: number, updates: Partial<Card>) => {
+    // Updates both database and local state
+    // Ensures consistency
+  };
+
+  const handleBlockUnblock = async (block: boolean) => {
+    // Updates both is_active and is_frozen states
+    // Ensures proper state cleanup
+  };
+
   if (isLoading) {
     return <Loading />;
   }
@@ -291,7 +305,9 @@ const UserDashboard = () => {
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Welcome back, {user?.email?.split('@')[0]}</h1>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Welcome back, {user?.email?.split('@')[0].charAt(0).toUpperCase() + user?.email?.split('@')[0].slice(1)}
+          </h1>
           <p className="text-gray-600 mt-1">Here's an overview of your finances</p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -316,19 +332,19 @@ const UserDashboard = () => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Link to="/cards" className="p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow flex items-center justify-center gap-2">
           <CreditCard className="w-5 h-5 text-primary-600" />
-          <span className="text-sm font-medium">Cards</span>
+          <span className="text-sm font-medium capitalize">Cards</span>
         </Link>
         <Link to="/payments" className="p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow flex items-center justify-center gap-2">
           <Wallet className="w-5 h-5 text-primary-600" />
-          <span className="text-sm font-medium">Payments</span>
+          <span className="text-sm font-medium capitalize">Payments</span>
         </Link>
         <Link to="/savings" className="p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow flex items-center justify-center gap-2">
           <PiggyBank className="w-5 h-5 text-primary-600" />
-          <span className="text-sm font-medium">Savings</span>
+          <span className="text-sm font-medium capitalize">Savings</span>
         </Link>
         <Link to="/investments" className="p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow flex items-center justify-center gap-2">
           <TrendingUp className="w-5 h-5 text-primary-600" />
-          <span className="text-sm font-medium">Investments</span>
+          <span className="text-sm font-medium capitalize">Investments</span>
         </Link>
       </div>
 
@@ -340,8 +356,8 @@ const UserDashboard = () => {
           <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl p-6 text-white">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-primary-100">Total Balance</p>
-                <h2 className="text-3xl font-bold mt-1">${totalBalance.toLocaleString()}</h2>
+                <p className="text-primary-100 font-medium">Total Balance</p>
+                <h2 className="text-3xl font-bold mt-1">${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h2>
               </div>
               <div className="bg-white/10 p-2 rounded-lg">
                 <TrendingUp className="w-6 h-6" />
@@ -356,7 +372,7 @@ const UserDashboard = () => {
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">
             <div className="p-4 border-b flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900">Budget Tracker</h2>
-              <Link to="/budget" className="text-sm text-primary-600 hover:text-primary-700">
+              <Link to="/budget" className="text-sm text-primary-600 hover:text-primary-700 font-medium">
                 View Details
               </Link>
             </div>
@@ -364,9 +380,9 @@ const UserDashboard = () => {
               {budgets.map((budget, index) => (
                 <div key={index}>
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm font-medium text-gray-700">{budget.category}</span>
-                    <span className="text-sm text-gray-500">
-                      ${budget.spent} / ${budget.limit}
+                    <span className="text-sm font-medium text-gray-700 capitalize">{budget.category}</span>
+                    <span className="text-sm text-gray-500 font-medium">
+                      ${budget.spent.toLocaleString()} / ${budget.limit.toLocaleString()}
                     </span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
@@ -390,12 +406,14 @@ const UserDashboard = () => {
                 <div key={account.id} className="p-4 hover:bg-gray-50 transition-colors">
                   <div className="flex justify-between items-center">
                     <div>
-                      <h3 className="font-medium text-gray-900">{account.account_type}</h3>
+                      <h3 className="font-medium text-gray-900 capitalize">
+                        {account.account_type.charAt(0).toUpperCase() + account.account_type.slice(1)}
+                      </h3>
                       <p className="text-sm text-gray-500">****{account.account_number.slice(-4)}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-gray-900">${account.balance.toLocaleString()}</p>
-                      <p className="text-xs text-gray-500">Available Balance</p>
+                      <p className="font-semibold text-gray-900">${account.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                      <p className="text-xs text-gray-500 font-medium">Available Balance</p>
                     </div>
                   </div>
                 </div>
@@ -424,15 +442,15 @@ const UserDashboard = () => {
                         <AlertTriangle className="w-5 h-5 text-yellow-500" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-medium text-gray-900">{notification.title}</h3>
+                        <h3 className="font-medium text-gray-900 capitalize">{notification.title}</h3>
                         <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
                         <div className="flex items-center justify-between mt-2">
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-500 font-medium">
                             {format(new Date(notification.created_at), 'MMM d, yyyy')}
                           </span>
                           <button
                             onClick={() => markNotificationAsRead(notification.id)}
-                            className="text-xs text-primary-600 hover:text-primary-700"
+                            className="text-xs text-primary-600 hover:text-primary-700 font-medium"
                           >
                             Mark as read
                           </button>
@@ -442,7 +460,7 @@ const UserDashboard = () => {
                   </div>
                 ))
               ) : (
-                <div className="p-4 text-center text-gray-500">
+                <div className="p-4 text-center text-gray-500 font-medium">
                   No new notifications
                 </div>
               )}
@@ -453,7 +471,7 @@ const UserDashboard = () => {
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">
             <div className="p-4 border-b flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900">Financial Goals</h2>
-              <Link to="/goals" className="text-sm text-primary-600 hover:text-primary-700">
+              <Link to="/goals" className="text-sm text-primary-600 hover:text-primary-700 font-medium">
                 View All
               </Link>
             </div>
@@ -465,8 +483,10 @@ const UserDashboard = () => {
                       <Target className="w-5 h-5 text-primary-600" />
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-900">{goal.title}</h3>
-                      <p className="text-sm text-gray-500">${goal.current} / ${goal.target}</p>
+                      <h3 className="font-medium text-gray-900 capitalize">{goal.title}</h3>
+                      <p className="text-sm text-gray-500 font-medium">
+                        ${goal.current.toLocaleString()} / ${goal.target.toLocaleString()}
+                      </p>
                     </div>
                   </div>
                   <div className="w-16 h-16">

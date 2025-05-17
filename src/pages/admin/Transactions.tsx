@@ -229,13 +229,19 @@ const AdminTransactions = () => {
         // Get account to update balance
         const { data: accountData, error: accountError } = await supabase
           .from('accounts')
-          .select('balance, user_id')
+          .select('balance, user_id, is_frozen')
           .eq('id', selectedAccountId)
           .single();
         
         if (accountError) {
           console.error('Error fetching account:', accountError);
           throw accountError;
+        }
+
+        // Check if account is frozen
+        if (accountData.is_frozen) {
+          toast.error('Cannot process transactions for a frozen account');
+          return;
         }
         
         // Calculate new balance

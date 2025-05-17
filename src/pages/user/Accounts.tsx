@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store/authStore';
-import { DollarSign, PlusCircle, Download, Lock, Unlock, Search, X } from 'lucide-react';
+import { DollarSign, PlusCircle, Download, Lock, Unlock, Search, X, ArrowRightLeft, MinusCircle } from 'lucide-react';
 import AccountCard from '../../components/ui/AccountCard';
 import Loading from '../../components/ui/Loading';
 import { format } from 'date-fns';
@@ -184,6 +184,13 @@ const UserAccounts = () => {
   const handleActionSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedAccount) return;
+
+    // Check if account is frozen
+    if (selectedAccount.is_frozen) {
+      toast.error('This account is frozen. Please contact customer support for assistance.');
+      return;
+    }
+
     const amount = parseFloat(actionAmount);
     if (isNaN(amount) || amount <= 0) return toast.error('Enter a valid amount');
     if (actionModal === 'withdraw' && amount > selectedAccount.balance) {
@@ -367,21 +374,180 @@ const UserAccounts = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 px-4 sm:px-6 lg:px-8 max-w-[2000px] mx-auto">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 sm:pt-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Your Accounts</h1>
-          <p className="text-gray-600 mt-1">Manage your accounts and view transactions</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Your Accounts</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-1">Manage your accounts and view transactions</p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
           <Link
             to="/accounts/new"
-            className="btn btn-primary flex items-center"
+            className="btn btn-primary flex items-center w-full sm:w-auto justify-center"
           >
             <PlusCircle className="w-4 h-4 mr-1" />
             New Account
           </Link>
+        </div>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
+          <div className="flex items-center">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary-100 flex items-center justify-center">
+              <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600" />
+            </div>
+            <div className="ml-3">
+              <p className="text-xs sm:text-sm text-gray-500">Total Balance</p>
+              <p className="text-base sm:text-lg font-semibold text-gray-900">
+                ${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
+          <div className="flex items-center">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-success-100 flex items-center justify-center">
+              <PlusCircle className="w-4 h-4 sm:w-5 sm:h-5 text-success-600" />
+            </div>
+            <div className="ml-3">
+              <p className="text-xs sm:text-sm text-gray-500">Active Accounts</p>
+              <p className="text-base sm:text-lg font-semibold text-gray-900">
+                {accounts.filter(a => !a.is_frozen).length}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
+          <div className="flex items-center">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-error-100 flex items-center justify-center">
+              <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-error-600" />
+            </div>
+            <div className="ml-3">
+              <p className="text-xs sm:text-sm text-gray-500">Frozen Accounts</p>
+              <p className="text-base sm:text-lg font-semibold text-gray-900">
+                {accounts.filter(a => a.is_frozen).length}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
+          <div className="flex items-center">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-100 flex items-center justify-center">
+              <Download className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
+            </div>
+            <div className="ml-3">
+              <p className="text-xs sm:text-sm text-gray-500">Recent Transactions</p>
+              <p className="text-base sm:text-lg font-semibold text-gray-900">
+                {recentTransactions.length}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
+        <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
+          <button 
+            onClick={() => {
+              if (accounts.length === 0) {
+                toast.error('You need at least one account to make transfers');
+                return;
+              }
+              if (accounts.length === 1) {
+                toast.error('You need at least two accounts to make transfers');
+                return;
+              }
+              const activeAccounts = accounts.filter(a => !a.is_frozen);
+              if (activeAccounts.length < 2) {
+                toast.error('You need at least two active accounts to make transfers');
+                return;
+              }
+              setSelectedAccount(activeAccounts[0]);
+              setActionModal('transfer');
+            }}
+            className="flex flex-col items-center justify-center p-3 sm:p-4 rounded-lg border border-gray-200 hover:border-primary-500 hover:bg-primary-50 transition-colors"
+            disabled={accounts.length < 2}
+          >
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary-100 flex items-center justify-center mb-2">
+              <ArrowRightLeft className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600" />
+            </div>
+            <span className="text-xs sm:text-sm font-medium text-gray-900">Transfer</span>
+            <span className="text-[10px] sm:text-xs text-gray-500 mt-1">Between accounts</span>
+          </button>
+          <button 
+            onClick={() => {
+              if (accounts.length === 0) {
+                toast.error('You need at least one account to make deposits');
+                return;
+              }
+              const activeAccounts = accounts.filter(a => !a.is_frozen);
+              if (activeAccounts.length === 0) {
+                toast.error('You need at least one active account to make deposits');
+                return;
+              }
+              setSelectedAccount(activeAccounts[0]);
+              setActionModal('deposit');
+            }}
+            className="flex flex-col items-center justify-center p-3 sm:p-4 rounded-lg border border-gray-200 hover:border-success-500 hover:bg-success-50 transition-colors"
+            disabled={accounts.length === 0}
+          >
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-success-100 flex items-center justify-center mb-2">
+              <PlusCircle className="w-4 h-4 sm:w-5 sm:h-5 text-success-600" />
+            </div>
+            <span className="text-xs sm:text-sm font-medium text-gray-900">Deposit</span>
+            <span className="text-[10px] sm:text-xs text-gray-500 mt-1">Add funds</span>
+          </button>
+          <button 
+            onClick={() => {
+              if (accounts.length === 0) {
+                toast.error('You need at least one account to make withdrawals');
+                return;
+              }
+              const activeAccounts = accounts.filter(a => !a.is_frozen);
+              if (activeAccounts.length === 0) {
+                toast.error('You need at least one active account to make withdrawals');
+                return;
+              }
+              setSelectedAccount(activeAccounts[0]);
+              setActionModal('withdraw');
+            }}
+            className="flex flex-col items-center justify-center p-3 sm:p-4 rounded-lg border border-gray-200 hover:border-error-500 hover:bg-error-50 transition-colors"
+            disabled={accounts.length === 0}
+          >
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-error-100 flex items-center justify-center mb-2">
+              <MinusCircle className="w-4 h-4 sm:w-5 sm:h-5 text-error-600" />
+            </div>
+            <span className="text-xs sm:text-sm font-medium text-gray-900">Withdraw</span>
+            <span className="text-[10px] sm:text-xs text-gray-500 mt-1">Remove funds</span>
+          </button>
+          <button 
+            onClick={() => {
+              if (accounts.length === 0) {
+                toast.error('You need at least one account to download statements');
+                return;
+              }
+              const activeAccounts = accounts.filter(a => !a.is_frozen);
+              if (activeAccounts.length === 0) {
+                toast.error('You need at least one active account to download statements');
+                return;
+              }
+              setSelectedAccount(activeAccounts[0]);
+              handleDownloadStatement();
+            }}
+            className="flex flex-col items-center justify-center p-3 sm:p-4 rounded-lg border border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition-colors"
+            disabled={accounts.length === 0}
+          >
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-100 flex items-center justify-center mb-2">
+              <Download className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
+            </div>
+            <span className="text-xs sm:text-sm font-medium text-gray-900">Statement</span>
+            <span className="text-[10px] sm:text-xs text-gray-500 mt-1">Download PDF</span>
+          </button>
         </div>
       </div>
 
@@ -393,7 +559,7 @@ const UserAccounts = () => {
           </span>
           <input
             type="text"
-            className="form-input pl-9 pr-3 py-2 w-full rounded"
+            className="form-input pl-9 pr-3 py-2 w-full rounded text-sm sm:text-base"
             placeholder="Search by type or account number..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
@@ -402,44 +568,23 @@ const UserAccounts = () => {
       </div>
 
       {/* Accounts List */}
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-[2000px] mx-auto">
         {filteredAccounts.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-8 text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary-100 text-primary-600 mb-4">
-              <DollarSign className="w-8 h-8" />
+          <div className="bg-white rounded-lg shadow-md p-6 sm:p-8 text-center">
+            <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary-100 text-primary-600 mb-4">
+              <DollarSign className="w-6 h-6 sm:w-8 sm:h-8" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900">No accounts yet</h3>
-            <p className="mt-1 text-sm text-gray-500 max-w-md mx-auto">
+            <h3 className="text-base sm:text-lg font-medium text-gray-900">No accounts yet</h3>
+            <p className="mt-1 text-xs sm:text-sm text-gray-500 max-w-md mx-auto">
               You don't have any accounts yet. Please contact our customer support to open an account.
             </p>
-            <button className="mt-4 btn btn-primary flex items-center mx-auto">
+            <button className="mt-4 btn btn-primary flex items-center mx-auto text-sm sm:text-base">
               <PlusCircle className="w-4 h-4 mr-2" />
               Contact Support
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Total Balance Card */}
-            <div className="card card-hover transition-all duration-300">
-              <div className="p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center">
-                    <div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center">
-                      <DollarSign className="w-6 h-6 text-primary-600" />
-                    </div>
-                    <div className="ml-4">
-                      <h3 className="text-lg font-semibold text-gray-900">Total Balance</h3>
-                      <p className="text-sm text-gray-500">Across all accounts</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-2xl font-bold text-primary-600">
-                      ${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {/* Individual Account Cards */}
             {filteredAccounts.map((account) => (
               <AccountCard
