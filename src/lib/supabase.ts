@@ -1,20 +1,27 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '../types/supabase';
 
-// These would typically come from environment variables
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+// Debug: Log all environment variables
+console.log('All env variables:', import.meta.env);
 
-if (!supabaseUrl || !supabaseKey) {
-  console.error('Missing Supabase credentials. Please check your .env file for:');
-  console.error('VITE_SUPABASE_URL:', supabaseUrl ? '✓ Set' : '✗ Missing');
-  console.error('VITE_SUPABASE_ANON_KEY:', supabaseKey ? '✓ Set' : '✗ Missing');
+// Get environment variables
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+// Debug: Log the specific variables we're looking for
+console.log('VITE_SUPABASE_URL:', supabaseUrl);
+console.log('VITE_SUPABASE_ANON_KEY:', supabaseKey ? 'Key exists' : 'Key missing');
+
+// Validate environment variables
+if (!supabaseUrl) {
+  throw new Error('VITE_SUPABASE_URL is required. Please check your .env file.');
 }
 
-// Log the first few characters of the URL and key for debugging (safely)
-console.log('Supabase URL:', supabaseUrl ? `${supabaseUrl.substring(0, 20)}...` : 'Not set');
-console.log('Supabase Key:', supabaseKey ? `${supabaseKey.substring(0, 10)}...` : 'Not set');
+if (!supabaseKey) {
+  throw new Error('VITE_SUPABASE_ANON_KEY is required. Please check your .env file.');
+}
 
+// Create Supabase client
 export const supabase = createClient<Database>(supabaseUrl, supabaseKey, {
   auth: {
     persistSession: true,
