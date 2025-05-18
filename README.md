@@ -35,6 +35,13 @@ npm run dev
 
 The application will be available at `http://localhost:5175`
 
+## Deployment
+
+The application is automatically deployed to GitHub Pages. The live version is available at:
+https://ghost247-bot.github.io/ulster/
+
+The deployment is handled automatically through GitHub Actions whenever changes are pushed to the main branch.
+
 ## Technologies Used
 
 - React
