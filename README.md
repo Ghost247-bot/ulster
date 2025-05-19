@@ -1,5 +1,7 @@
 # Ulster Banking Application
 
+[![Deploy to GitHub Pages](https://github.com/Ghost247-bot/ulster/actions/workflows/deploy.yml/badge.svg)](https://github.com/Ghost247-bot/ulster/actions/workflows/deploy.yml)
+
 A modern banking application built with React and TypeScript.
 
 ## Features
