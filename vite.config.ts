@@ -12,9 +12,10 @@ export default defineConfig({
   envPrefix: 'VITE_',
   // Enable source maps for better debugging
   build: {
-    sourcemap: true,
     outDir: 'dist',
     assetsDir: 'assets',
+    emptyOutDir: true,
+    sourcemap: true,
     rollupOptions: {
       output: {
         assetFileNames: 'assets/[name]-[hash][extname]',
