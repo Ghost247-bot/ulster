@@ -301,26 +301,26 @@ const UserDashboard = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
             Welcome back, {user?.email?.split('@')[0].charAt(0).toUpperCase() + user?.email?.split('@')[0].slice(1)}
           </h1>
-          <p className="text-gray-600 mt-1">Here's an overview of your finances</p>
+          <p className="text-sm sm:text-base text-gray-600 mt-1">Here's an overview of your finances</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Link
             to="/accounts"
-            className="btn btn-primary flex items-center"
+            className="btn btn-primary flex items-center text-sm sm:text-base"
           >
             <PlusCircle className="w-4 h-4 mr-1" />
             New Account
           </Link>
           <Link
             to="/transactions"
-            className="btn btn-outline flex items-center"
+            className="btn btn-outline flex items-center text-sm sm:text-base"
           >
             <FileText className="w-4 h-4 mr-1" />
             View All Transactions
@@ -329,35 +329,35 @@ const UserDashboard = () => {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Link to="/cards" className="p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow flex items-center justify-center gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        <Link to="/cards" className="p-3 sm:p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow flex items-center justify-center gap-2">
           <CreditCard className="w-5 h-5 text-primary-600" />
           <span className="text-sm font-medium capitalize">Cards</span>
         </Link>
-        <Link to="/payments" className="p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow flex items-center justify-center gap-2">
+        <Link to="/payments" className="p-3 sm:p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow flex items-center justify-center gap-2">
           <Wallet className="w-5 h-5 text-primary-600" />
           <span className="text-sm font-medium capitalize">Payments</span>
         </Link>
-        <Link to="/savings" className="p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow flex items-center justify-center gap-2">
+        <Link to="/savings" className="p-3 sm:p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow flex items-center justify-center gap-2">
           <PiggyBank className="w-5 h-5 text-primary-600" />
           <span className="text-sm font-medium capitalize">Savings</span>
         </Link>
-        <Link to="/investments" className="p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow flex items-center justify-center gap-2">
+        <Link to="/investments" className="p-3 sm:p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow flex items-center justify-center gap-2">
           <TrendingUp className="w-5 h-5 text-primary-600" />
           <span className="text-sm font-medium capitalize">Investments</span>
         </Link>
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Left Column - Accounts & Balance */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-4 sm:space-y-6">
           {/* Total Balance Card */}
-          <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl p-6 text-white">
+          <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl p-4 sm:p-6 text-white">
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-primary-100 font-medium">Total Balance</p>
-                <h2 className="text-3xl font-bold mt-1">${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold mt-1">${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h2>
               </div>
               <div className="bg-white/10 p-2 rounded-lg">
                 <TrendingUp className="w-6 h-6" />
@@ -370,13 +370,13 @@ const UserDashboard = () => {
 
           {/* Budget Tracker */}
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div className="p-4 border-b flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Budget Tracker</h2>
+            <div className="p-3 sm:p-4 border-b flex items-center justify-between">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900">Budget Tracker</h2>
               <Link to="/budget" className="text-sm text-primary-600 hover:text-primary-700 font-medium">
                 View Details
               </Link>
             </div>
-            <div className="p-4 space-y-4">
+            <div className="p-3 sm:p-4 space-y-3 sm:space-y-4">
               {budgets.map((budget, index) => (
                 <div key={index}>
                   <div className="flex justify-between items-center mb-1">
@@ -398,12 +398,12 @@ const UserDashboard = () => {
 
           {/* Accounts List */}
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div className="p-4 border-b">
-              <h2 className="text-lg font-semibold text-gray-900">Your Accounts</h2>
+            <div className="p-3 sm:p-4 border-b">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900">Your Accounts</h2>
             </div>
             <div className="divide-y">
               {accounts.map((account) => (
-                <div key={account.id} className="p-4 hover:bg-gray-50 transition-colors">
+                <div key={account.id} className="p-3 sm:p-4 hover:bg-gray-50 transition-colors">
                   <div className="flex justify-between items-center">
                     <div>
                       <h3 className="font-medium text-gray-900 capitalize">
@@ -423,11 +423,11 @@ const UserDashboard = () => {
         </div>
 
         {/* Right Column - Notifications & Recent Activity */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Notifications */}
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div className="p-4 border-b flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Notifications</h2>
+            <div className="p-3 sm:p-4 border-b flex items-center justify-between">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900">Notifications</h2>
               <Bell className="w-5 h-5 text-gray-400" />
             </div>
             <div className="divide-y">
@@ -435,7 +435,7 @@ const UserDashboard = () => {
                 notifications.map((notification) => (
                   <div
                     key={notification.id}
-                    className="p-4 hover:bg-gray-50 transition-colors"
+                    className="p-3 sm:p-4 hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-start gap-3">
                       <div className="mt-1">
@@ -460,7 +460,7 @@ const UserDashboard = () => {
                   </div>
                 ))
               ) : (
-                <div className="p-4 text-center text-gray-500 font-medium">
+                <div className="p-3 sm:p-4 text-center text-gray-500 font-medium">
                   No new notifications
                 </div>
               )}
@@ -469,13 +469,13 @@ const UserDashboard = () => {
 
           {/* Financial Goals */}
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div className="p-4 border-b flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Financial Goals</h2>
+            <div className="p-3 sm:p-4 border-b flex items-center justify-between">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900">Financial Goals</h2>
               <Link to="/goals" className="text-sm text-primary-600 hover:text-primary-700 font-medium">
                 View All
               </Link>
             </div>
-            <div className="p-4 space-y-4">
+            <div className="p-3 sm:p-4 space-y-3 sm:space-y-4">
               {goals.map((goal) => (
                 <div key={goal.id} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
