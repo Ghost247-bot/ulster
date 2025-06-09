@@ -46,7 +46,7 @@ function LiveChatButton() {
     <button
       onClick={openLiveChat}
       aria-label="Live Chat"
-      className="fixed z-50 right-0 top-1/2 -translate-y-1/2 transition-all duration-300 group hidden md:block"
+      className="fixed z-50 right-0 top-1/2 -translate-y-1/2 transition-all duration-300 group"
       style={{ width: '154px', height: '39px' }}
     >
       <div
@@ -99,17 +99,16 @@ const MainLayout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <BankHeader />
-      <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <main className="flex-grow">
         <Outlet />
       </main>
       {showButton && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-4 sm:bottom-8 right-4 sm:right-8 z-50 bg-[#1B4D3E] text-white p-2 sm:px-4 sm:py-2 rounded-full shadow-lg hover:bg-[#153d32] transition-colors"
+          className="fixed bottom-8 right-8 z-50 bg-[#1B4D3E] text-white px-4 py-2 rounded-full shadow-lg hover:bg-[#153d32] transition-colors"
           aria-label="Back to Top"
         >
-          <span className="hidden sm:inline">↑ Back to Top</span>
-          <span className="sm:hidden">↑</span>
+          ↑ Back to Top
         </button>
       )}
       <LiveChatButton />

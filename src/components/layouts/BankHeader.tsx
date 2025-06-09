@@ -392,174 +392,543 @@ const BankHeader: React.FC = () => {
   };
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50">
-      {/* Top Bar */}
-      <div className="bg-[#1B4D3E] text-white py-2 px-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-4">
-            <a href="tel:+1234567890" className="text-sm hover:text-gray-200 flex items-center">
-              <FiMapPin className="mr-1" /> Contact Us: (123) 456-7890
-            </a>
-          </div>
-          <div className="hidden md:flex items-center space-x-4">
-            <Link to="/locations" className="text-sm hover:text-gray-200">Find a Branch</Link>
-            <Link to="/contact" className="text-sm hover:text-gray-200">Contact Us</Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Header */}
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20">
-          {/* Logo */}
-          <Link to="/" className="flex-shrink-0">
-            <img src="/logo.png" alt="Bank Logo" className="h-12 w-auto" />
-          </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-8">
-            <div className="relative group" ref={personalRef}>
-              <button
-                className="flex items-center text-gray-700 hover:text-[#1B4D3E] font-medium"
-                onMouseEnter={() => handleMegaMenu('personal')}
-                onMouseLeave={() => handleMouseLeave('personal')}
-              >
-                Personal Banking
-                <FiChevronDown className="ml-1" />
-              </button>
-              {/* Personal Banking Dropdown */}
-              {personalOpen && (
-                <div className="absolute top-full left-0 w-screen max-w-6xl bg-white shadow-lg rounded-lg p-6 grid grid-cols-3 gap-8">
-                  {personalDropdownLinks.map((section) => (
-                    <div key={section.heading}>
-                      <h3 className="font-semibold text-gray-900 mb-4">{section.heading}</h3>
-                      <ul className="space-y-3">
-                        {section.links.map((link) => (
-                          <li key={link.name}>
-                            <Link
-                              to={link.path}
-                              className="text-gray-600 hover:text-[#1B4D3E] block"
-                            >
-                              {link.name}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            {/* Similar structure for Business, Wealth, and Resources dropdowns */}
-          </nav>
-
-          {/* Search and User Actions */}
-          <div className="flex items-center space-x-4">
-            <div className="relative" ref={searchRef}>
-              <input
-                type="text"
-                placeholder="Search..."
-                value={search}
-                onChange={handleInput}
-                onKeyDown={handleKeyDown}
-                onFocus={() => setShowSuggestions(true)}
-                className="hidden md:block w-64 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] focus:border-transparent"
-              />
-              <button className="md:hidden text-gray-600 hover:text-[#1B4D3E]">
-                <FiSearch className="w-6 h-6" />
-              </button>
-              {/* Search Suggestions */}
-              {showSuggestions && (search.trim() || recent.length > 0) && (
-                <div
-                  ref={suggestionsRef}
-                  className="absolute top-full right-0 mt-2 w-64 bg-white rounded-lg shadow-lg py-2 z-50"
-                >
-                  {/* Suggestions content */}
-                </div>
-              )}
-            </div>
-
-            {/* User Actions */}
-            <div className="flex items-center space-x-4">
-              {user ? (
-                <div className="relative" ref={loginRef}>
-                  <button
-                    onClick={() => setLoginDropdown(!loginDropdown)}
-                    className="flex items-center space-x-2 text-gray-700 hover:text-[#1B4D3E]"
-                  >
-                    <FiUser className="w-6 h-6" />
-                    <span className="hidden md:inline">{profile?.first_name || 'Account'}</span>
-                  </button>
-                  {/* User Dropdown */}
-                  {loginDropdown && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
-                      {/* Dropdown content */}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <Link
-                  to="/login"
-                  className="hidden md:inline-block bg-[#1B4D3E] text-white px-6 py-2 rounded-full hover:bg-[#153d32] transition-colors"
-                >
-                  Login
-                </Link>
-              )}
-            </div>
-
-            {/* Mobile Menu Button */}
+    <header className="w-full">
+      {/* Modal */}
+      {modal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative animate-fade-in">
             <button
-              onClick={() => setMobileNav(!mobileNav)}
-              className="lg:hidden text-gray-600 hover:text-[#1B4D3E]"
+              className="absolute top-2 right-2 text-gray-500 hover:text-black text-2xl font-bold"
+              onClick={() => setModal(null)}
+              aria-label="Close"
             >
-              {mobileNav ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
+              ×
             </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Navigation */}
-      {mobileNav && (
-        <div className="lg:hidden bg-white border-t">
-          <div className="container mx-auto px-4 py-4">
-            <nav className="space-y-4">
-              {/* Mobile Navigation Items */}
-              <div className="space-y-2">
-                <button
-                  onClick={() => setPersonalOpen(!personalOpen)}
-                  className="w-full flex items-center justify-between text-gray-700 hover:text-[#1B4D3E] font-medium py-2"
-                >
-                  Personal Banking
-                  <FiChevronDown className={`transform transition-transform ${personalOpen ? 'rotate-180' : ''}`} />
-                </button>
-                {personalOpen && (
-                  <div className="pl-4 space-y-2">
-                    {personalDropdownLinks.map((section) => (
-                      <div key={section.heading}>
-                        <h3 className="font-semibold text-gray-900 py-2">{section.heading}</h3>
-                        <ul className="space-y-2">
-                          {section.links.map((link) => (
-                            <li key={link.name}>
-                              <Link
-                                to={link.path}
-                                className="text-gray-600 hover:text-[#1B4D3E] block py-1"
-                                onClick={() => setMobileNav(false)}
-                              >
-                                {link.name}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-              {/* Similar structure for other mobile navigation sections */}
-            </nav>
+            {modalContent[modal]}
           </div>
         </div>
       )}
+      {/* Top Bar */}
+      <div className="bg-[#1B4D3E] text-white text-xs flex flex-col sm:flex-row justify-between items-center px-3 sm:px-8 py-2 space-y-2 sm:space-y-0 transition-all duration-300">
+        <div className="flex flex-wrap justify-center gap-2 sm:gap-4 sm:space-x-6">
+          <button onClick={() => navigate('/contact')} className="hover:underline focus:outline-none bg-transparent text-white transition-colors duration-200 hover:text-gray-200 text-[11px] sm:text-xs">Schedule Appointment</button>
+          <button onClick={() => navigate('/register')} className="hover:underline focus:outline-none bg-transparent text-white transition-colors duration-200 hover:text-gray-200 text-[11px] sm:text-xs">Open/Apply</button>
+          <button onClick={() => navigate('/financial-education')} className="hover:underline focus:outline-none bg-transparent text-white transition-colors duration-200 hover:text-gray-200 text-[11px] sm:text-xs">Investor Relations</button>
+          <button onClick={() => navigate('/contact')} className="hover:underline focus:outline-none bg-transparent text-white transition-colors duration-200 hover:text-gray-200 text-[11px] sm:text-xs">Careers</button>
+          <button onClick={() => navigate('/contact')} className="flex items-center hover:underline focus:outline-none bg-transparent text-white transition-colors duration-200 hover:text-gray-200 text-[11px] sm:text-xs">Location <FiMapPin className="ml-1" size={12} /></button>
+        </div>
+        <div className="relative w-full max-w-xs mt-2 sm:mt-0">
+          <form onSubmit={handleSearch} autoComplete="off" className="relative">
+            <input
+              ref={searchRef}
+              type="text"
+              placeholder="Search"
+              className="w-full py-1.5 sm:py-2 pl-3 pr-10 border border-gray-300 text-black rounded-sm focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] focus:border-transparent text-xs sm:text-sm transition-all duration-200"
+              value={search}
+              onChange={handleInput}
+              onFocus={() => setShowSuggestions(true)}
+              onKeyDown={handleKeyDown}
+            />
+            <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 text-[#1B4D3E] hover:text-[#0F2E24] transition-colors duration-200">
+              <FiSearch size={16} className="sm:w-5 sm:h-5" />
+            </button>
+          </form>
+          {showSuggestions && (suggestions.length > 0 || (!search && recent.length > 0)) && (
+            <div ref={suggestionsRef} className="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded shadow-lg z-50 animate-fade-in max-h-[300px] overflow-y-auto">
+              {search && suggestions.length > 0 ? (
+                suggestions.map((s, i) => (
+                  <div
+                    key={s.path}
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 cursor-pointer hover:bg-[#f5f5f5] transition-colors duration-200 ${highlighted === i ? 'bg-[#e0f2f1]' : ''}`}
+                    onMouseDown={() => handleSuggestionClick(s)}
+                    onMouseEnter={() => setHighlighted(i)}
+                  >
+                    <span className="font-medium text-[#1B4D3E] text-xs sm:text-sm">{s.title}</span>
+                    <span className="ml-2 text-[10px] sm:text-xs text-gray-400">{s.path}</span>
+                  </div>
+                ))
+              ) : (
+                <>
+                  <div className="px-3 sm:px-4 py-1.5 sm:py-2 text-[10px] sm:text-xs text-gray-400">Recent searches</div>
+                  {recent.map((q, i) => (
+                    <div
+                      key={q}
+                      className={`px-3 sm:px-4 py-1.5 sm:py-2 cursor-pointer hover:bg-[#f5f5f5] transition-colors duration-200 ${highlighted === i ? 'bg-[#e0f2f1]' : ''}`}
+                      onMouseDown={() => handleRecentClick(q)}
+                      onMouseEnter={() => setHighlighted(i)}
+                    >
+                      <span className="font-medium text-[#1B4D3E] text-xs sm:text-sm">{q}</span>
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+      {/* Main Logo/Title */}
+      <div className="bg-[#1B4D3E] flex flex-col sm:flex-row items-center px-3 sm:px-8 py-3 sm:py-4 shadow-md">
+        <div className="flex items-center w-full justify-between">
+          <Link to="/" className="flex items-center group transition-transform duration-200 hover:scale-105">
+            <svg className="h-8 w-8 sm:h-12 sm:w-12 text-white mr-2 sm:mr-3 group-hover:opacity-80 transition-all duration-200" fill="none" viewBox="0 0 40 40" stroke="currentColor">
+              <circle cx="20" cy="20" r="18" strokeWidth="3" />
+              <path d="M10 20c5-10 15-10 20 0" strokeWidth="2" />
+            </svg>
+            <span className="text-xl sm:text-2xl md:text-4xl font-light text-white font-sans tracking-tight group-hover:underline transition-all duration-200">Ulster Delt Bank</span>
+          </Link>
+          <button className="sm:hidden text-white hover:text-gray-200 transition-colors duration-200 p-1" onClick={() => setMobileNav(!mobileNav)}>
+            {mobileNav ? <FiX size={24} /> : <FiMenu size={24} />}
+          </button>
+        </div>
+      </div>
+      {/* Nav Bar */}
+      <div className="bg-gray-100 px-3 sm:px-8 h-12 sm:h-14 flex items-center relative shadow-sm">
+        {/* Desktop Nav */}
+        <nav className="hidden sm:flex space-x-4 md:space-x-8 lg:space-x-10 text-sm md:text-base lg:text-lg font-medium text-black">
+          {/* Personal Mega Dropdown */}
+          <div
+            className="relative flex flex-col justify-center"
+            ref={personalRef}
+            onMouseEnter={() => handleMegaMenu('personal')}
+            onMouseLeave={() => handleMouseLeave('personal')}
+          >
+            <button
+              className={`px-1 pt-1 border-b-2 transition-all duration-200 ${personalOpen ? 'border-[#1B4D3E] font-bold text-[#1B4D3E]' : 'border-transparent hover:border-gray-300'} focus:outline-none flex items-center`}
+              onClick={() => handleMegaMenu('personal')}
+              type="button"
+            >
+              Personal
+            </button>
+            {personalOpen && (
+              <div className="absolute left-0 top-full mt-2 w-screen max-w-5xl bg-white shadow-lg border-t-2 border-[#1B4D3E] z-30 p-4 sm:p-8 flex flex-wrap gap-4 sm:gap-8 animate-fade-in rounded-b-lg">
+                {personalDropdownLinks.map((col, idx) => (
+                  <div key={idx} className="min-w-[140px] sm:min-w-[160px] mb-4">
+                    {col.heading && <div className="font-bold mb-2 text-xs sm:text-sm md:text-base text-[#1B4D3E]">{col.heading}</div>}
+                    <ul className="space-y-1">
+                      {col.links.map((link, i) => (
+                        <li key={i}>
+                          <Link 
+                            to={link.path}
+                            className="text-xs sm:text-sm md:text-base text-gray-700 hover:text-[#1B4D3E] hover:underline cursor-pointer whitespace-nowrap transition-colors duration-200"
+                          >
+                            {link.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          {/* Business Mega Dropdown */}
+          <div
+            className="relative flex flex-col justify-center"
+            ref={businessRef}
+            onMouseEnter={() => handleMegaMenu('business')}
+            onMouseLeave={() => handleMouseLeave('business')}
+          >
+            <button
+              className={`px-1 pt-1 border-b-2 ${businessOpen ? 'border-[#1B4D3E] font-bold' : 'border-transparent'} focus:outline-none flex items-center`}
+              onClick={() => handleMegaMenu('business')}
+              type="button"
+            >
+              Business
+            </button>
+            {businessOpen && (
+              <div className="absolute left-0 top-full mt-2 w-screen max-w-5xl bg-gray-100 shadow-lg border-t-2 border-[#1B4D3E] z-30 p-8 flex flex-wrap gap-8 animate-fade-in">
+                {businessDropdownLinks.map((col, idx) => (
+                  <div key={idx} className="min-w-[160px] mb-4">
+                    {col.heading && <div className="font-bold mb-2 text-sm md:text-base">{col.heading}</div>}
+                    <ul className="space-y-1">
+                      {col.links.map((link, i) => (
+                        <li key={i}>
+                          <Link 
+                            to={link.path}
+                            className="text-sm md:text-base text-black hover:underline cursor-pointer whitespace-nowrap"
+                          >
+                            {link.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          {/* Wealth Management Mega Dropdown */}
+          <div
+            className="relative flex flex-col justify-center"
+            ref={wealthRef}
+            onMouseEnter={() => handleMegaMenu('wealth')}
+            onMouseLeave={() => handleMouseLeave('wealth')}
+          >
+            <button
+              className={`px-1 pt-1 border-b-2 ${wealthOpen ? 'border-[#1B4D3E] font-bold' : 'border-transparent'} focus:outline-none flex items-center`}
+              onClick={() => handleMegaMenu('wealth')}
+              type="button"
+            >
+              Wealth Management
+            </button>
+            {wealthOpen && (
+              <div className="absolute left-0 top-full mt-2 w-screen max-w-5xl bg-gray-100 shadow-lg border-t-2 border-[#1B4D3E] z-30 p-8 flex flex-wrap gap-8 animate-fade-in">
+                {wealthDropdownLinks.map((col, idx) => (
+                  <div key={idx} className="min-w-[160px] mb-4">
+                    {col.heading && <div className="font-bold mb-2 text-sm md:text-base">{col.heading}</div>}
+                    <ul className="space-y-1">
+                      {col.links.map((link, i) => (
+                        <li key={i}>
+                          <Link 
+                            to={link.path}
+                            className="text-sm md:text-base text-black hover:underline cursor-pointer whitespace-nowrap"
+                          >
+                            {link.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          {/* Resources Mega Dropdown */}
+          <div
+            className="relative flex flex-col justify-center"
+            ref={resourcesRef}
+            onMouseEnter={() => handleMegaMenu('resources')}
+            onMouseLeave={() => handleMouseLeave('resources')}
+          >
+            <button
+              className={`px-1 pt-1 border-b-2 ${resourcesOpen ? 'border-[#1B4D3E] font-bold' : 'border-transparent'} focus:outline-none flex items-center`}
+              onClick={() => handleMegaMenu('resources')}
+              type="button"
+            >
+              Resources
+            </button>
+            {resourcesOpen && (
+              <div className="absolute left-0 top-full mt-2 w-screen max-w-5xl bg-gray-100 shadow-lg border-t-2 border-[#1B4D3E] z-30 p-8 flex flex-wrap gap-8 animate-fade-in">
+                {resourcesDropdownLinks.map((col, idx) => (
+                  <div key={idx} className="min-w-[160px] mb-4">
+                    {col.heading && <div className="font-bold mb-2 text-sm md:text-base">{col.heading}</div>}
+                    <ul className="space-y-1">
+                      {col.links.map((link, i) => (
+                        <li key={i}>
+                          <Link 
+                            to={link.path}
+                            className="text-sm md:text-base text-black hover:underline cursor-pointer whitespace-nowrap"
+                          >
+                            {link.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <Link to="/contact" className="hover:underline">Contact</Link>
+        </nav>
+        {/* Auth/Profile Dropdown Desktop */}
+        <div className="ml-auto hidden sm:block relative" ref={loginRef}>
+          {!user ? (
+            <>
+              <button
+                className="bg-white px-6 py-2 text-base md:text-lg font-semibold text-black shadow-sm border border-gray-200 flex items-center focus:outline-none"
+                onClick={() => setLoginDropdown((v) => !v)}
+              >
+                LOG IN <FiChevronDown className="ml-2" />
+              </button>
+              {loginDropdown && (
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg z-20">
+                  <Link to="/login" className="block px-4 py-2 hover:bg-gray-100" onClick={()=>setLoginDropdown(false)}>Personal Login</Link>
+                  <Link to="/login" className="block px-4 py-2 hover:bg-gray-100" onClick={()=>setLoginDropdown(false)}>Business Login</Link>
+                  <Link to="/register" className="block px-4 py-2 hover:bg-gray-100" onClick={()=>setLoginDropdown(false)}>Open Account</Link>
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <button
+                className="bg-white px-6 py-2 text-base md:text-lg font-semibold text-black shadow-sm border border-gray-200 flex items-center focus:outline-none"
+                onClick={() => setLoginDropdown((v) => !v)}
+              >
+                {profile?.first_name ? `${profile.first_name} ${profile.last_name}` : user.email}
+                <FiChevronDown className="ml-2" />
+              </button>
+              {loginDropdown && (
+                <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 shadow-lg z-20">
+                  <div className="px-4 py-2 text-sm text-gray-700 border-b">{user.email}</div>
+                  <Link to={profile?.is_admin ? "/admin" : "/dashboard"} className="block px-4 py-2 hover:bg-gray-100" onClick={()=>setLoginDropdown(false)}>Dashboard</Link>
+                  <Link to="/accounts" className="block px-4 py-2 hover:bg-gray-100" onClick={()=>setLoginDropdown(false)}>Accounts</Link>
+                  <Link to="/cards" className="block px-4 py-2 hover:bg-gray-100" onClick={()=>setLoginDropdown(false)}>Cards</Link>
+                  <Link to="/transactions" className="block px-4 py-2 hover:bg-gray-100" onClick={()=>setLoginDropdown(false)}>Transactions</Link>
+                  <Link to="/profile" className="block px-4 py-2 hover:bg-gray-100" onClick={()=>setLoginDropdown(false)}>Your Profile</Link>
+                  <Link 
+                    to="/admin/notifications" 
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" 
+                    onClick={() => {
+                      setLoginDropdown(false);
+                      setMobileNav(false);
+                    }}
+                  >
+                    <FiBell className="inline-block mr-2" />
+                    Notifications
+                  </Link>
+                  <button
+                    onClick={handleSignOut}
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+        {/* Mobile Auth/Profile Dropdown */}
+        {mobileNav && (
+          <div className="fixed inset-0 z-50 bg-white">
+            <div className="h-full flex flex-col">
+              {/* Mobile Menu Header */}
+              <div className="bg-[#1B4D3E] px-4 py-3 flex items-center justify-between">
+                <Link to="/" className="flex items-center" onClick={() => setMobileNav(false)}>
+                  <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 40 40" stroke="currentColor">
+                    <circle cx="20" cy="20" r="18" strokeWidth="3" />
+                    <path d="M10 20c5-10 15-10 20 0" strokeWidth="2" />
+                  </svg>
+                  <span className="ml-2 text-xl font-light text-white">Ulster Delt Bank</span>
+                </Link>
+                <button 
+                  className="text-white p-2 hover:bg-white/10 rounded-full transition-colors duration-200" 
+                  onClick={() => setMobileNav(false)}
+                >
+                  <FiX size={24} />
+                </button>
+              </div>
+
+              {/* Mobile Menu Content */}
+              <div className="flex-1 overflow-y-auto bg-gray-50">
+                {/* Mobile Search */}
+                <div className="p-4 border-b border-gray-200 bg-white">
+                  <form onSubmit={handleSearch} autoComplete="off" className="relative">
+                    <input
+                      ref={searchRef}
+                      type="text"
+                      placeholder="Search"
+                      className="w-full py-2 pl-3 pr-10 border border-gray-300 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] focus:border-transparent text-sm transition-all duration-200"
+                      value={search}
+                      onChange={handleInput}
+                      onFocus={() => setShowSuggestions(true)}
+                      onKeyDown={handleKeyDown}
+                    />
+                    <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 text-[#1B4D3E] hover:text-[#0F2E24] transition-colors duration-200">
+                      <FiSearch size={18} />
+                    </button>
+                  </form>
+                </div>
+
+                {/* Mobile Navigation */}
+                <nav className="divide-y divide-gray-200">
+                  {/* Personal Banking Mobile Dropdown */}
+                  <div className="relative" ref={personalRef}>
+                    <button
+                      className={`w-full text-left px-4 py-3 flex items-center justify-between bg-white hover:bg-gray-50 transition-colors duration-200 ${personalOpen ? 'text-[#1B4D3E]' : 'text-gray-900'}`}
+                      onClick={() => setPersonalOpen((v) => !v)}
+                      type="button"
+                    >
+                      <span className="font-medium">Personal Banking</span>
+                      <FiChevronDown className={`ml-2 transition-transform duration-200 ${personalOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    {personalOpen && (
+                      <div className="bg-gray-50 border-t border-gray-200 animate-fade-in">
+                        {personalDropdownLinks.map((col, idx) => (
+                          <div key={idx} className="px-4 py-3">
+                            {col.heading && (
+                              <div className="font-semibold text-sm text-[#1B4D3E] mb-2">{col.heading}</div>
+                            )}
+                            <ul className="space-y-1">
+                              {col.links.map((link, i) => (
+                                <li key={i}>
+                                  <Link 
+                                    to={link.path}
+                                    className="block py-2 px-2 text-sm text-gray-700 hover:text-[#1B4D3E] hover:bg-gray-100 rounded-md transition-colors duration-200"
+                                    onClick={() => setMobileNav(false)}
+                                  >
+                                    {link.name}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Business Mobile Dropdown */}
+                  <div className="relative" ref={businessRef}>
+                    <button
+                      className={`w-full text-left px-4 py-3 flex items-center justify-between bg-white hover:bg-gray-50 transition-colors duration-200 ${businessOpen ? 'text-[#1B4D3E]' : 'text-gray-900'}`}
+                      onClick={() => setBusinessOpen((v) => !v)}
+                      type="button"
+                    >
+                      <span className="font-medium">Business</span>
+                      <FiChevronDown className={`ml-2 transition-transform duration-200 ${businessOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    {businessOpen && (
+                      <div className="bg-gray-50 border-t border-gray-200 animate-fade-in">
+                        {businessDropdownLinks.map((col, idx) => (
+                          <div key={idx} className="px-4 py-3">
+                            {col.heading && (
+                              <div className="font-semibold text-sm text-[#1B4D3E] mb-2">{col.heading}</div>
+                            )}
+                            <ul className="space-y-1">
+                              {col.links.map((link, i) => (
+                                <li key={i}>
+                                  <Link 
+                                    to={link.path}
+                                    className="block py-2 px-2 text-sm text-gray-700 hover:text-[#1B4D3E] hover:bg-gray-100 rounded-md transition-colors duration-200"
+                                    onClick={() => setMobileNav(false)}
+                                  >
+                                    {link.name}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Wealth Management Mobile Dropdown */}
+                  <div className="relative" ref={wealthRef}>
+                    <button
+                      className={`w-full text-left px-4 py-3 flex items-center justify-between bg-white hover:bg-gray-50 transition-colors duration-200 ${wealthOpen ? 'text-[#1B4D3E]' : 'text-gray-900'}`}
+                      onClick={() => setWealthOpen((v) => !v)}
+                      type="button"
+                    >
+                      <span className="font-medium">Wealth Management</span>
+                      <FiChevronDown className={`ml-2 transition-transform duration-200 ${wealthOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    {wealthOpen && (
+                      <div className="bg-gray-50 border-t border-gray-200 animate-fade-in">
+                        {wealthDropdownLinks.map((col, idx) => (
+                          <div key={idx} className="px-4 py-3">
+                            {col.heading && (
+                              <div className="font-semibold text-sm text-[#1B4D3E] mb-2">{col.heading}</div>
+                            )}
+                            <ul className="space-y-1">
+                              {col.links.map((link, i) => (
+                                <li key={i}>
+                                  <Link 
+                                    to={link.path}
+                                    className="block py-2 px-2 text-sm text-gray-700 hover:text-[#1B4D3E] hover:bg-gray-100 rounded-md transition-colors duration-200"
+                                    onClick={() => setMobileNav(false)}
+                                  >
+                                    {link.name}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Resources Mobile Dropdown */}
+                  <div className="relative" ref={resourcesRef}>
+                    <button
+                      className={`w-full text-left px-4 py-3 flex items-center justify-between bg-white hover:bg-gray-50 transition-colors duration-200 ${resourcesOpen ? 'text-[#1B4D3E]' : 'text-gray-900'}`}
+                      onClick={() => setResourcesOpen((v) => !v)}
+                      type="button"
+                    >
+                      <span className="font-medium">Resources</span>
+                      <FiChevronDown className={`ml-2 transition-transform duration-200 ${resourcesOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    {resourcesOpen && (
+                      <div className="bg-gray-50 border-t border-gray-200 animate-fade-in">
+                        {resourcesDropdownLinks.map((col, idx) => (
+                          <div key={idx} className="px-4 py-3">
+                            {col.heading && (
+                              <div className="font-semibold text-sm text-[#1B4D3E] mb-2">{col.heading}</div>
+                            )}
+                            <ul className="space-y-1">
+                              {col.links.map((link, i) => (
+                                <li key={i}>
+                                  <Link 
+                                    to={link.path}
+                                    className="block py-2 px-2 text-sm text-gray-700 hover:text-[#1B4D3E] hover:bg-gray-100 rounded-md transition-colors duration-200"
+                                    onClick={() => setMobileNav(false)}
+                                  >
+                                    {link.name}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Contact Link */}
+                  <div className="bg-white">
+                    <Link
+                      to="/contact"
+                      className="block px-4 py-3 text-gray-900 hover:bg-gray-50 transition-colors duration-200"
+                      onClick={() => setMobileNav(false)}
+                    >
+                      Contact Us
+                    </Link>
+                  </div>
+                </nav>
+                {/* Mobile Auth Section */}
+                <div className="border-t border-gray-200 bg-white p-4">
+                  {!user ? (
+                    <div className="flex flex-col gap-2">
+                      <Link
+                        to="/login"
+                        className="w-full text-center bg-[#1B4D3E] text-white py-2 rounded-md font-semibold hover:bg-[#153d32] transition-colors duration-200"
+                        onClick={() => setMobileNav(false)}
+                      >
+                        Sign In
+                      </Link>
+                      <Link
+                        to="/register"
+                        className="w-full text-center bg-white border border-[#1B4D3E] text-[#1B4D3E] py-2 rounded-md font-semibold hover:bg-gray-100 transition-colors duration-200"
+                        onClick={() => setMobileNav(false)}
+                      >
+                        Open Account
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-2">
+                      <Link
+                        to={profile?.is_admin ? "/admin" : "/dashboard"}
+                        className="w-full text-center bg-[#1B4D3E] text-white py-2 rounded-md font-semibold hover:bg-[#153d32] transition-colors duration-200"
+                        onClick={() => setMobileNav(false)}
+                      >
+                        Dashboard
+                      </Link>
+                      <button
+                        onClick={() => { setMobileNav(false); handleSignOut(); }}
+                        className="w-full text-center bg-white border border-[#1B4D3E] text-[#1B4D3E] py-2 rounded-md font-semibold hover:bg-gray-100 transition-colors duration-200"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </header>
   );
 };
