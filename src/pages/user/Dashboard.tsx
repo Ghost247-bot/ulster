@@ -38,6 +38,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import Loading from '../../components/ui/Loading';
+import BannerDisplay from '../../components/ui/BannerDisplay';
 
 // Register ChartJS components
 ChartJS.register(
@@ -302,6 +303,9 @@ const UserDashboard = () => {
 
   return (
     <div className="space-y-4 sm:space-y-6">
+      {/* Banners */}
+      <BannerDisplay />
+
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>

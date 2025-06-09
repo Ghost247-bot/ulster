@@ -87,6 +87,9 @@ const InvestmentsPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center py-10">
+      <div className="w-full bg-yellow-400 text-black text-center py-1 text-sm font-semibold">
+        🚨 This is your admin dashboard banner! 🚨
+      </div>
       <div className="w-full max-w-2xl bg-white rounded-xl shadow p-8">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">

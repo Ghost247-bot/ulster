@@ -67,6 +67,7 @@ import SavingsPage from './pages/user/SavingsPage';
 import InvestmentsPage from './pages/user/InvestmentsPage';
 import AdminLogin from './pages/admin/Login';
 import AdminNotifications from './pages/admin/Notifications';
+import AdminBanner from './pages/admin/Banner';
 // Placeholder imports for not-yet-created pages
 const CommercialRealEstate = () => <div>Commercial Real Estate Page Coming Soon</div>;
 const SBALoans = () => <div>SBA Loans Page Coming Soon</div>;
@@ -308,11 +309,12 @@ function App() {
       <Route element={<ProtectedRoute allowedRole="admin" />}>
         <Route element={<AdminLayout />}>
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/notifications" element={<AdminNotifications />} />
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/accounts" element={<AdminAccounts />} />
-          <Route path="/admin/transactions" element={<AdminTransactions />} />
           <Route path="/admin/cards" element={<AdminCards />} />
+          <Route path="/admin/transactions" element={<AdminTransactions />} />
+          <Route path="/admin/notifications" element={<AdminNotifications />} />
+          <Route path="/admin/banner" element={<AdminBanner />} />
         </Route>
       </Route>
 

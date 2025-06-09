@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Users, CreditCard, LogOut, LayoutDashboard, 
-  DollarSign, FileText, Menu, X, ShieldAlert, BellRing 
+  DollarSign, FileText, Menu, X, ShieldAlert, BellRing, Image 
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import BackToTop from '../ui/BackToTop';
@@ -35,6 +35,7 @@ const AdminLayout = () => {
     { path: '/admin/accounts', icon: <DollarSign className="w-5 h-5" />, label: 'Accounts' },
     { path: '/admin/cards', icon: <CreditCard className="w-5 h-5" />, label: 'Cards' },
     { path: '/admin/transactions', icon: <FileText className="w-5 h-5" />, label: 'Transactions' },
+    { path: '/admin/banner', icon: <Image className="w-5 h-5" />, label: 'Banner' },
   ];
   
   const isActive = (path: string) => location.pathname === path;
