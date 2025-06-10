@@ -93,7 +93,7 @@ interface FinancialGoal {
 }
 
 const UserDashboard = () => {
-  const { user } = useAuthStore();
+  const { user, profile } = useAuthStore();
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -310,7 +310,7 @@ const UserDashboard = () => {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-            Welcome back, {user?.email?.split('@')[0].charAt(0).toUpperCase() + user?.email?.split('@')[0].slice(1)}
+            Welcome back, {profile?.first_name && profile?.last_name ? `${profile.first_name} ${profile.last_name}` : user?.email?.split('@')[0].charAt(0).toUpperCase() + user?.email?.split('@')[0].slice(1)}
           </h1>
           <p className="text-sm sm:text-base text-gray-600 mt-1">Here's an overview of your finances</p>
         </div>
