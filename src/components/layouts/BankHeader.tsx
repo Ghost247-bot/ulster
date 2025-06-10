@@ -467,22 +467,22 @@ const BankHeader: React.FC = () => {
         </div>
       </div>
       {/* Main Logo/Title */}
-      <div className="bg-[#1B4D3E] flex flex-col sm:flex-row items-center px-3 sm:px-8 py-3 sm:py-4 shadow-md">
+      <div className="bg-[#1B4D3E] flex flex-col sm:flex-row items-center px-3 sm:px-8 py-2 sm:py-3 shadow-md">
         <div className="flex items-center w-full justify-between">
           <Link to="/" className="flex items-center group transition-transform duration-200 hover:scale-105">
-            <svg className="h-8 w-8 sm:h-12 sm:w-12 text-white mr-2 sm:mr-3 group-hover:opacity-80 transition-all duration-200" fill="none" viewBox="0 0 40 40" stroke="currentColor">
+            <svg className="h-6 w-6 sm:h-8 sm:w-8 text-white mr-2 sm:mr-3 group-hover:opacity-80 transition-all duration-200" fill="none" viewBox="0 0 40 40" stroke="currentColor">
               <circle cx="20" cy="20" r="18" strokeWidth="3" />
               <path d="M10 20c5-10 15-10 20 0" strokeWidth="2" />
             </svg>
-            <span className="text-xl sm:text-2xl md:text-4xl font-light text-white font-sans tracking-tight group-hover:underline transition-all duration-200">Ulster Delt Bank</span>
+            <span className="text-lg sm:text-xl md:text-2xl font-light text-white font-sans tracking-tight group-hover:underline transition-all duration-200">Ulster Delt Bank</span>
           </Link>
           <button className="sm:hidden text-white hover:text-gray-200 transition-colors duration-200 p-1" onClick={() => setMobileNav(!mobileNav)}>
-            {mobileNav ? <FiX size={24} /> : <FiMenu size={24} />}
+            {mobileNav ? <FiX size={20} /> : <FiMenu size={20} />}
           </button>
         </div>
       </div>
       {/* Nav Bar */}
-      <div className="bg-gray-100 px-3 sm:px-8 h-12 sm:h-14 flex items-center relative shadow-sm">
+      <div className="bg-gray-100 px-3 sm:px-8 h-10 sm:h-12 flex items-center relative shadow-sm">
         {/* Desktop Nav */}
         <nav className="hidden sm:flex space-x-4 md:space-x-8 lg:space-x-10 text-sm md:text-base lg:text-lg font-medium text-black">
           {/* Personal Mega Dropdown */}
