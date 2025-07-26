@@ -7,10 +7,13 @@ const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isPersonalDropdownOpen, setIsPersonalDropdownOpen] = useState(false);
   const [isBusinessDropdownOpen, setIsBusinessDropdownOpen] = useState(false);
+  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState('EN');
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const personalDropdownRef = useRef<HTMLDivElement>(null);
   const businessDropdownRef = useRef<HTMLDivElement>(null);
+  const languageDropdownRef = useRef<HTMLDivElement>(null);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -25,6 +28,9 @@ const Header: React.FC = () => {
       }
       if (businessDropdownRef.current && !businessDropdownRef.current.contains(event.target as Node)) {
         setIsBusinessDropdownOpen(false);
+      }
+      if (languageDropdownRef.current && !languageDropdownRef.current.contains(event.target as Node)) {
+        setIsLanguageDropdownOpen(false);
       }
     };
 
@@ -143,6 +149,34 @@ const Header: React.FC = () => {
                 >
                   Sign Out
                 </button>
+                {/* Language Selector */}
+                <div className="relative" ref={languageDropdownRef}>
+                  <button
+                    className="ml-2 p-2 rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-white flex items-center"
+                    aria-label="Change language"
+                    onClick={() => setIsLanguageDropdownOpen((open) => !open)}
+                  >
+                    <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3C7.03 3 3 7.03 3 12s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 0c2.21 0 4 4.03 4 9s-1.79 9-4 9-4-4.03-4-9 1.79-9 4-9zm0 0v18" />
+                    </svg>
+                    <span className="ml-1 text-white font-semibold">{selectedLanguage}</span>
+                  </button>
+                  {isLanguageDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-24 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-20">
+                      <div className="py-1">
+                        {['EN', 'ES', 'FR'].map((lang) => (
+                          <button
+                            key={lang}
+                            onClick={() => { setSelectedLanguage(lang); setIsLanguageDropdownOpen(false); }}
+                            className={`block w-full text-left px-4 py-2 text-sm ${selectedLanguage === lang ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-indigo-50'}`}
+                          >
+                            {lang}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             ) : (
               <div className="flex items-center space-x-4">
@@ -158,6 +192,34 @@ const Header: React.FC = () => {
                 >
                   Open Account
                 </Link>
+                {/* Language Selector */}
+                <div className="relative" ref={languageDropdownRef}>
+                  <button
+                    className="ml-2 p-2 rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-white flex items-center"
+                    aria-label="Change language"
+                    onClick={() => setIsLanguageDropdownOpen((open) => !open)}
+                  >
+                    <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3C7.03 3 3 7.03 3 12s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 0c2.21 0 4 4.03 4 9s-1.79 9-4 9-4-4.03-4-9 1.79-9 4-9zm0 0v18" />
+                    </svg>
+                    <span className="ml-1 text-white font-semibold">{selectedLanguage}</span>
+                  </button>
+                  {isLanguageDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-24 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-20">
+                      <div className="py-1">
+                        {['EN', 'ES', 'FR'].map((lang) => (
+                          <button
+                            key={lang}
+                            onClick={() => { setSelectedLanguage(lang); setIsLanguageDropdownOpen(false); }}
+                            className={`block w-full text-left px-4 py-2 text-sm ${selectedLanguage === lang ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-indigo-50'}`}
+                          >
+                            {lang}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -263,6 +325,34 @@ const Header: React.FC = () => {
                 >
                   Sign Out
                 </button>
+                {/* Language Selector for Mobile */}
+                <div className="relative mt-2" ref={languageDropdownRef}>
+                  <button
+                    className="p-2 rounded-full hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-white flex items-center"
+                    aria-label="Change language"
+                    onClick={() => setIsLanguageDropdownOpen((open) => !open)}
+                  >
+                    <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3C7.03 3 3 7.03 3 12s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 0c2.21 0 4 4.03 4 9s-1.79 9-4 9-4-4.03-4-9 1.79-9 4-9zm0 0v18" />
+                    </svg>
+                    <span className="ml-1 text-white font-semibold">{selectedLanguage}</span>
+                  </button>
+                  {isLanguageDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-24 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-20">
+                      <div className="py-1">
+                        {['EN', 'ES', 'FR'].map((lang) => (
+                          <button
+                            key={lang}
+                            onClick={() => { setSelectedLanguage(lang); setIsLanguageDropdownOpen(false); }}
+                            className={`block w-full text-left px-4 py-2 text-sm ${selectedLanguage === lang ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-indigo-50'}`}
+                          >
+                            {lang}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             ) : (
               <div className="space-y-1">
@@ -278,6 +368,34 @@ const Header: React.FC = () => {
                 >
                   Open Account
                 </Link>
+                {/* Language Selector for Mobile */}
+                <div className="relative mt-2" ref={languageDropdownRef}>
+                  <button
+                    className="p-2 rounded-full hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-white flex items-center"
+                    aria-label="Change language"
+                    onClick={() => setIsLanguageDropdownOpen((open) => !open)}
+                  >
+                    <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3C7.03 3 3 7.03 3 12s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 0c2.21 0 4 4.03 4 9s-1.79 9-4 9-4-4.03-4-9 1.79-9 4-9zm0 0v18" />
+                    </svg>
+                    <span className="ml-1 text-white font-semibold">{selectedLanguage}</span>
+                  </button>
+                  {isLanguageDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-24 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-20">
+                      <div className="py-1">
+                        {['EN', 'ES', 'FR'].map((lang) => (
+                          <button
+                            key={lang}
+                            onClick={() => { setSelectedLanguage(lang); setIsLanguageDropdownOpen(false); }}
+                            className={`block w-full text-left px-4 py-2 text-sm ${selectedLanguage === lang ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-indigo-50'}`}
+                          >
+                            {lang}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
