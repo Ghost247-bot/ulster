@@ -256,16 +256,16 @@ const Transactions = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 px-4 sm:px-6 lg:px-8 max-w-[2000px] mx-auto">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Transactions</h1>
-          <p className="text-gray-600 mt-1">View and manage your transaction history</p>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-slide-in-up">
+        <div className="flex-1 min-w-0">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 animate-fade-in">Transactions</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-1 animate-fade-in-delay">View and manage your transaction history</p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 animate-slide-in-right w-full sm:w-auto">
           <button 
-            className="btn btn-outline flex items-center"
+            className="btn btn-outline flex items-center justify-center transform hover:scale-105 transition-all duration-200 hover:shadow-md w-full sm:w-auto"
             onClick={exportTransactions}
             disabled={filteredTransactions.length === 0}
           >
@@ -276,62 +276,65 @@ const Transactions = () => {
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg shadow-md p-4">
-          <h3 className="text-sm font-medium text-gray-500">Total Deposits</h3>
-          <p className="text-2xl font-bold text-green-600">${stats.totalDeposits.toFixed(2)}</p>
+      <div className="grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.1s' }}>
+          <h3 className="text-xs sm:text-sm font-medium text-gray-500">Total Deposits</h3>
+          <p className="text-lg sm:text-xl lg:text-2xl font-bold text-green-600 animate-count-up break-all">${stats.totalDeposits.toFixed(2)}</p>
         </div>
-        <div className="bg-white rounded-lg shadow-md p-4">
-          <h3 className="text-sm font-medium text-gray-500">Total Withdrawals</h3>
-          <p className="text-2xl font-bold text-red-600">${stats.totalWithdrawals.toFixed(2)}</p>
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.2s' }}>
+          <h3 className="text-xs sm:text-sm font-medium text-gray-500">Total Withdrawals</h3>
+          <p className="text-lg sm:text-xl lg:text-2xl font-bold text-red-600 animate-count-up break-all">${stats.totalWithdrawals.toFixed(2)}</p>
         </div>
-        <div className="bg-white rounded-lg shadow-md p-4">
-          <h3 className="text-sm font-medium text-gray-500">Net Amount</h3>
-          <p className={`text-2xl font-bold ${stats.netAmount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.3s' }}>
+          <h3 className="text-xs sm:text-sm font-medium text-gray-500">Net Amount</h3>
+          <p className={`text-lg sm:text-xl lg:text-2xl font-bold animate-count-up break-all ${stats.netAmount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
             ${stats.netAmount.toFixed(2)}
           </p>
         </div>
-        <div className="bg-white rounded-lg shadow-md p-4">
-          <h3 className="text-sm font-medium text-gray-500">Transaction Count</h3>
-          <p className="text-2xl font-bold text-gray-900">{stats.transactionCount}</p>
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.4s' }}>
+          <h3 className="text-xs sm:text-sm font-medium text-gray-500">Transaction Count</h3>
+          <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 animate-count-up">{stats.transactionCount}</p>
         </div>
       </div>
 
       {/* Quick Date Range Buttons */}
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2 animate-slide-in-up">
         <button 
-          className="btn btn-sm btn-outline"
+          className="btn btn-sm btn-outline transform hover:scale-105 transition-all duration-200 hover:shadow-md flex-1 xs:flex-none"
           onClick={() => handleQuickDateRange(7)}
         >
-          Last 7 Days
+          <span className="hidden xs:inline">Last 7 Days</span>
+          <span className="xs:hidden">7 Days</span>
         </button>
         <button 
-          className="btn btn-sm btn-outline"
+          className="btn btn-sm btn-outline transform hover:scale-105 transition-all duration-200 hover:shadow-md flex-1 xs:flex-none"
           onClick={() => handleQuickDateRange(30)}
         >
-          Last 30 Days
+          <span className="hidden xs:inline">Last 30 Days</span>
+          <span className="xs:hidden">30 Days</span>
         </button>
         <button 
-          className="btn btn-sm btn-outline"
+          className="btn btn-sm btn-outline transform hover:scale-105 transition-all duration-200 hover:shadow-md flex-1 xs:flex-none"
           onClick={() => handleQuickDateRange(90)}
         >
-          Last 90 Days
+          <span className="hidden xs:inline">Last 90 Days</span>
+          <span className="xs:hidden">90 Days</span>
         </button>
       </div>
 
       {/* Filters Section */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4">
+      <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-4 sm:mb-6 animate-slide-in-up hover:shadow-lg transition-all duration-300">
+        <div className="flex flex-col space-y-4 lg:flex-row lg:space-y-0 lg:space-x-4">
           {/* Search */}
           <div className="flex-1">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
+                <Search className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
               </div>
               <input
                 type="text"
                 placeholder="Search transactions..."
-                className="form-input pl-10"
+                className="form-input pl-9 sm:pl-10 text-sm sm:text-base"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -339,10 +342,10 @@ const Transactions = () => {
           </div>
 
           {/* Account Filter */}
-          <div className="w-full md:w-48">
+          <div className="w-full lg:w-48">
             <div className="relative">
               <select
-                className="form-input appearance-none pr-10"
+                className="form-input appearance-none pr-8 sm:pr-10 text-sm sm:text-base"
                 value={selectedAccount === 'all' ? 'all' : selectedAccount}
                 onChange={(e) => setSelectedAccount(e.target.value === 'all' ? 'all' : Number(e.target.value))}
               >
@@ -354,16 +357,16 @@ const Transactions = () => {
                 ))}
               </select>
               <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                <ChevronDown className="h-4 w-4 text-gray-400" />
+                <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
               </div>
             </div>
           </div>
 
           {/* Transaction Type Filter */}
-          <div className="w-full md:w-48">
+          <div className="w-full lg:w-48">
             <div className="relative">
               <select
-                className="form-input appearance-none pr-10"
+                className="form-input appearance-none pr-8 sm:pr-10 text-sm sm:text-base"
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value)}
               >
@@ -373,45 +376,46 @@ const Transactions = () => {
                 <option value="transfer">Transfers</option>
               </select>
               <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                <ChevronDown className="h-4 w-4 text-gray-400" />
+                <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Date Filters */}
-        <div className="mt-4 flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 items-end">
-          <div className="w-full md:w-48">
-            <label htmlFor="date-start" className="form-label">
+        <div className="mt-4 flex flex-col space-y-4 lg:flex-row lg:space-y-0 lg:space-x-4 items-end">
+          <div className="w-full lg:w-48">
+            <label htmlFor="date-start" className="form-label text-sm sm:text-base">
               From Date
             </label>
             <input
               id="date-start"
               type="date"
-              className="form-input"
+              className="form-input text-sm sm:text-base"
               value={dateRange.start || ''}
               onChange={(e) => handleDateChange('start', e.target.value)}
             />
           </div>
-          <div className="w-full md:w-48">
-            <label htmlFor="date-end" className="form-label">
+          <div className="w-full lg:w-48">
+            <label htmlFor="date-end" className="form-label text-sm sm:text-base">
               To Date
             </label>
             <input
               id="date-end"
               type="date"
-              className="form-input"
+              className="form-input text-sm sm:text-base"
               value={dateRange.end || ''}
               onChange={(e) => handleDateChange('end', e.target.value)}
             />
           </div>
-          <div className="md:ml-auto">
+          <div className="lg:ml-auto w-full lg:w-auto">
             <button
               onClick={resetFilters}
-              className="btn btn-outline flex items-center"
+              className="btn btn-outline flex items-center justify-center w-full lg:w-auto text-sm sm:text-base"
             >
               <Filter className="w-4 h-4 mr-2" />
-              Reset Filters
+              <span className="hidden xs:inline">Reset Filters</span>
+              <span className="xs:hidden">Reset</span>
             </button>
           </div>
         </div>
@@ -419,8 +423,8 @@ const Transactions = () => {
 
       {/* Transactions List */}
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="border-b border-gray-200 px-6 py-4">
-          <h2 className="text-lg font-medium text-gray-900">
+        <div className="border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4">
+          <h2 className="text-base sm:text-lg font-medium text-gray-900">
             {filteredTransactions.length} {filteredTransactions.length === 1 ? 'Transaction' : 'Transactions'}
           </h2>
         </div>
@@ -434,28 +438,28 @@ const Transactions = () => {
         />
         
         {filteredTransactions.length === 0 && (
-          <div className="py-8 text-center text-gray-500">
+          <div className="py-6 sm:py-8 text-center text-gray-500 text-sm sm:text-base">
             No transactions match your filters
           </div>
         )}
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-gray-200">
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-gray-500">
+          <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-200">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="text-xs sm:text-sm text-gray-500 text-center sm:text-left">
                 Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, filteredTransactions.length)} of {filteredTransactions.length} transactions
               </div>
               <div className="flex gap-2">
                 <button
-                  className="btn btn-sm btn-outline"
+                  className="btn btn-sm btn-outline text-xs sm:text-sm"
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
                 >
                   Previous
                 </button>
                 <button
-                  className="btn btn-sm btn-outline"
+                  className="btn btn-sm btn-outline text-xs sm:text-sm"
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
                 >

@@ -157,28 +157,30 @@ const PaymentsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-10">
-      <div className="w-full max-w-2xl bg-white rounded-xl shadow p-8">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <Wallet className="w-10 h-10 text-primary-600" />
-            <h1 className="text-2xl font-bold">Payments</h1>
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-6 sm:py-10 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-2xl bg-white rounded-xl shadow p-4 sm:p-6 lg:p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Wallet className="w-8 h-8 sm:w-10 sm:h-10 text-primary-600" />
+            <h1 className="text-xl sm:text-2xl font-bold">Payments</h1>
           </div>
-          <button className="btn btn-primary flex items-center gap-1">
-            <PlusCircle className="w-5 h-5" /> New Payment
+          <button className="btn btn-primary flex items-center justify-center gap-1 w-full sm:w-auto text-sm sm:text-base">
+            <PlusCircle className="w-4 h-4 sm:w-5 sm:h-5" /> 
+            <span className="hidden xs:inline">New Payment</span>
+            <span className="xs:hidden">New</span>
           </button>
         </div>
 
         {/* Make a Payment Form */}
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold mb-3">Make a Payment</h2>
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-base sm:text-lg font-semibold mb-3">Make a Payment</h2>
           <form onSubmit={handlePaymentSubmit} className="flex flex-col gap-3">
             {savedPayees.length > 0 && (
               <select
                 name="selectedPayee"
                 value={paymentForm.selectedPayee}
                 onChange={handlePaymentFormChange}
-                className="select select-bordered"
+                className="select select-bordered text-sm sm:text-base"
               >
                 <option value="">Select a saved payee</option>
                 {savedPayees.map(payee => (
@@ -192,7 +194,7 @@ const PaymentsPage = () => {
               name="recipient"
               value={paymentForm.recipient}
               onChange={handlePaymentFormChange}
-              className="input input-bordered"
+              className="input input-bordered text-sm sm:text-base"
               placeholder="Recipient Name"
               required
             />
@@ -200,18 +202,18 @@ const PaymentsPage = () => {
               name="amount"
               value={paymentForm.amount}
               onChange={handlePaymentFormChange}
-              className="input input-bordered"
+              className="input input-bordered text-sm sm:text-base"
               placeholder="Amount"
               type="number"
               step="0.01"
               min="0.01"
               required
             />
-            {error && <div className="text-red-500 text-sm">{error}</div>}
-            {success && <div className="text-green-500 text-sm">{success}</div>}
+            {error && <div className="text-red-500 text-xs sm:text-sm">{error}</div>}
+            {success && <div className="text-green-500 text-xs sm:text-sm">{success}</div>}
             <button 
               type="submit" 
-              className="btn btn-primary w-fit"
+              className="btn btn-primary w-full sm:w-fit text-sm sm:text-base"
               disabled={isSubmitting}
             >
               {isSubmitting ? 'Processing...' : 'Send Payment'}
@@ -220,19 +222,19 @@ const PaymentsPage = () => {
         </div>
 
         {/* Payment History */}
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold mb-3">Payment History</h2>
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-base sm:text-lg font-semibold mb-3">Payment History</h2>
           <div className="divide-y">
             {paymentHistory.length === 0 ? (
-              <div className="text-gray-500">No payment history found.</div>
+              <div className="text-gray-500 text-sm sm:text-base py-4">No payment history found.</div>
             ) : paymentHistory.map(ph => (
-              <div key={ph.id} className="flex justify-between items-center py-3">
-                <div>
-                  <div className="font-medium">{ph.recipient}</div>
+              <div key={ph.id} className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 gap-2">
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-sm sm:text-base truncate">{ph.recipient}</div>
                   <div className="text-xs text-gray-500">{ph.date}</div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className={`font-semibold ${ph.amount < 0 ? 'text-red-600' : 'text-green-600'}`}>{ph.amount < 0 ? '-' : '+'}${Math.abs(ph.amount).toFixed(2)}</span>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <span className={`font-semibold text-sm sm:text-base ${ph.amount < 0 ? 'text-red-600' : 'text-green-600'}`}>{ph.amount < 0 ? '-' : '+'}${Math.abs(ph.amount).toFixed(2)}</span>
                   <span className={`text-xs ${ph.status === 'Completed' ? 'text-green-600' : 'text-yellow-600'}`}>{ph.status}</span>
                 </div>
               </div>
@@ -241,16 +243,16 @@ const PaymentsPage = () => {
         </div>
 
         {/* Saved Payees */}
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold mb-3">Saved Payees</h2>
-          <div className="flex flex-wrap gap-3">
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-base sm:text-lg font-semibold mb-3">Saved Payees</h2>
+          <div className="flex flex-wrap gap-2 sm:gap-3">
             {savedPayees.length === 0 ? (
-              <div className="text-gray-500">No saved payees.</div>
+              <div className="text-gray-500 text-sm sm:text-base">No saved payees.</div>
             ) : savedPayees.map(payee => (
-              <div key={payee.id} className="flex items-center gap-2 bg-gray-100 rounded-lg px-4 py-2">
-                <User className="w-4 h-4 text-primary-600" />
-                <span className="font-medium">{payee.name}</span>
-                <span className="text-xs text-gray-500">{payee.account}</span>
+              <div key={payee.id} className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 sm:px-4 py-2 flex-1 min-w-0">
+                <User className="w-3 h-3 sm:w-4 sm:h-4 text-primary-600 flex-shrink-0" />
+                <span className="font-medium text-xs sm:text-sm truncate">{payee.name}</span>
+                <span className="text-xs text-gray-500 truncate">{payee.account}</span>
               </div>
             ))}
           </div>
@@ -258,18 +260,26 @@ const PaymentsPage = () => {
 
         {/* Scheduled Payments */}
         <div>
-          <h2 className="text-lg font-semibold mb-3 flex items-center gap-2"><CalendarClock className="w-5 h-5 text-primary-600" /> Scheduled Payments</h2>
+          <h2 className="text-base sm:text-lg font-semibold mb-3 flex items-center gap-2">
+            <CalendarClock className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600" /> 
+            <span className="hidden xs:inline">Scheduled Payments</span>
+            <span className="xs:hidden">Scheduled</span>
+          </h2>
           <div className="divide-y">
             {scheduledPayments.length === 0 ? (
               <div className="text-gray-500 text-sm py-2">No scheduled payments</div>
             ) : scheduledPayments.map(sp => (
-              <div key={sp.id} className="flex justify-between items-center py-3">
-                <div>
-                  <div className="font-medium">{sp.recipient}</div>
+              <div key={sp.id} className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 gap-2">
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-sm sm:text-base truncate">{sp.recipient}</div>
                   <div className="text-xs text-gray-500">{sp.date}</div>
                 </div>
-                <div className="font-semibold text-primary-700">${sp.amount.toFixed(2)}</div>
-                <button className="p-2 rounded hover:bg-gray-200" title="Send Now"><Send className="w-5 h-5 text-primary-600" /></button>
+                <div className="flex items-center justify-between sm:justify-end gap-2">
+                  <div className="font-semibold text-primary-700 text-sm sm:text-base">${sp.amount.toFixed(2)}</div>
+                  <button className="p-2 rounded hover:bg-gray-200 flex-shrink-0" title="Send Now">
+                    <Send className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>

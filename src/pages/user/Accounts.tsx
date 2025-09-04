@@ -376,15 +376,15 @@ const UserAccounts = () => {
   return (
     <div className="space-y-4 sm:space-y-6 px-4 sm:px-6 lg:px-8 max-w-[2000px] mx-auto">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 sm:pt-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 sm:pt-6 animate-slide-in-up">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Your Accounts</h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-1">Manage your accounts and view transactions</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 animate-fade-in">Your Accounts</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-1 animate-fade-in-delay">Manage your accounts and view transactions</p>
         </div>
-        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto animate-slide-in-right">
           <Link
             to="/accounts/new"
-            className="btn btn-primary flex items-center w-full sm:w-auto justify-center"
+            className="btn btn-primary flex items-center w-full sm:w-auto justify-center transform hover:scale-105 transition-all duration-200 hover:shadow-lg"
           >
             <PlusCircle className="w-4 h-4 mr-1" />
             New Account
@@ -393,54 +393,54 @@ const UserAccounts = () => {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
+      <div className="grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.1s' }}>
           <div className="flex items-center">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary-100 flex items-center justify-center">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
               <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600" />
             </div>
-            <div className="ml-3">
+            <div className="ml-3 flex-1 min-w-0">
               <p className="text-xs sm:text-sm text-gray-500">Total Balance</p>
-              <p className="text-base sm:text-lg font-semibold text-gray-900">
+              <p className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 animate-count-up break-all">
                 ${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.2s' }}>
           <div className="flex items-center">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-success-100 flex items-center justify-center">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-success-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
               <PlusCircle className="w-4 h-4 sm:w-5 sm:h-5 text-success-600" />
             </div>
-            <div className="ml-3">
+            <div className="ml-3 flex-1 min-w-0">
               <p className="text-xs sm:text-sm text-gray-500">Active Accounts</p>
-              <p className="text-base sm:text-lg font-semibold text-gray-900">
+              <p className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 animate-count-up">
                 {accounts.filter(a => !a.is_frozen).length}
               </p>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.3s' }}>
           <div className="flex items-center">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-error-100 flex items-center justify-center">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-error-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
               <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-error-600" />
             </div>
-            <div className="ml-3">
+            <div className="ml-3 flex-1 min-w-0">
               <p className="text-xs sm:text-sm text-gray-500">Frozen Accounts</p>
-              <p className="text-base sm:text-lg font-semibold text-gray-900">
+              <p className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 animate-count-up">
                 {accounts.filter(a => a.is_frozen).length}
               </p>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.4s' }}>
           <div className="flex items-center">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-100 flex items-center justify-center">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
               <Download className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
             </div>
-            <div className="ml-3">
+            <div className="ml-3 flex-1 min-w-0">
               <p className="text-xs sm:text-sm text-gray-500">Recent Transactions</p>
-              <p className="text-base sm:text-lg font-semibold text-gray-900">
+              <p className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 animate-count-up">
                 {recentTransactions.length}
               </p>
             </div>
@@ -449,9 +449,9 @@ const UserAccounts = () => {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-lg shadow-md p-3 sm:p-4">
+      <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 animate-slide-in-up hover:shadow-lg transition-all duration-300">
         <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
           <button 
             onClick={() => {
               if (accounts.length === 0) {
@@ -470,14 +470,15 @@ const UserAccounts = () => {
               setSelectedAccount(activeAccounts[0]);
               setActionModal('transfer');
             }}
-            className="flex flex-col items-center justify-center p-3 sm:p-4 rounded-lg border border-gray-200 hover:border-primary-500 hover:bg-primary-50 transition-colors"
+            className="group flex flex-col items-center justify-center p-3 sm:p-4 rounded-lg border border-gray-200 hover:border-primary-500 hover:bg-primary-50 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 animate-slide-in-up"
+            style={{ animationDelay: '0.1s' }}
             disabled={accounts.length < 2}
           >
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary-100 flex items-center justify-center mb-2">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary-100 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform duration-300">
               <ArrowRightLeft className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600" />
             </div>
-            <span className="text-xs sm:text-sm font-medium text-gray-900">Transfer</span>
-            <span className="text-[10px] sm:text-xs text-gray-500 mt-1">Between accounts</span>
+            <span className="text-xs sm:text-sm font-medium text-gray-900 group-hover:text-primary-700 transition-colors duration-300 text-center">Transfer</span>
+            <span className="text-[10px] sm:text-xs text-gray-500 mt-1 text-center">Between accounts</span>
           </button>
           <button 
             onClick={() => {
@@ -493,14 +494,15 @@ const UserAccounts = () => {
               setSelectedAccount(activeAccounts[0]);
               setActionModal('deposit');
             }}
-            className="flex flex-col items-center justify-center p-3 sm:p-4 rounded-lg border border-gray-200 hover:border-success-500 hover:bg-success-50 transition-colors"
+            className="group flex flex-col items-center justify-center p-3 sm:p-4 rounded-lg border border-gray-200 hover:border-success-500 hover:bg-success-50 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 animate-slide-in-up"
+            style={{ animationDelay: '0.2s' }}
             disabled={accounts.length === 0}
           >
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-success-100 flex items-center justify-center mb-2">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-success-100 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform duration-300">
               <PlusCircle className="w-4 h-4 sm:w-5 sm:h-5 text-success-600" />
             </div>
-            <span className="text-xs sm:text-sm font-medium text-gray-900">Deposit</span>
-            <span className="text-[10px] sm:text-xs text-gray-500 mt-1">Add funds</span>
+            <span className="text-xs sm:text-sm font-medium text-gray-900 group-hover:text-success-700 transition-colors duration-300 text-center">Deposit</span>
+            <span className="text-[10px] sm:text-xs text-gray-500 mt-1 text-center">Add funds</span>
           </button>
           <button 
             onClick={() => {
@@ -516,14 +518,15 @@ const UserAccounts = () => {
               setSelectedAccount(activeAccounts[0]);
               setActionModal('withdraw');
             }}
-            className="flex flex-col items-center justify-center p-3 sm:p-4 rounded-lg border border-gray-200 hover:border-error-500 hover:bg-error-50 transition-colors"
+            className="group flex flex-col items-center justify-center p-3 sm:p-4 rounded-lg border border-gray-200 hover:border-error-500 hover:bg-error-50 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 animate-slide-in-up"
+            style={{ animationDelay: '0.3s' }}
             disabled={accounts.length === 0}
           >
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-error-100 flex items-center justify-center mb-2">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-error-100 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform duration-300">
               <MinusCircle className="w-4 h-4 sm:w-5 sm:h-5 text-error-600" />
             </div>
-            <span className="text-xs sm:text-sm font-medium text-gray-900">Withdraw</span>
-            <span className="text-[10px] sm:text-xs text-gray-500 mt-1">Remove funds</span>
+            <span className="text-xs sm:text-sm font-medium text-gray-900 group-hover:text-error-700 transition-colors duration-300 text-center">Withdraw</span>
+            <span className="text-[10px] sm:text-xs text-gray-500 mt-1 text-center">Remove funds</span>
           </button>
           <button 
             onClick={() => {
@@ -539,21 +542,22 @@ const UserAccounts = () => {
               setSelectedAccount(activeAccounts[0]);
               handleDownloadStatement();
             }}
-            className="flex flex-col items-center justify-center p-3 sm:p-4 rounded-lg border border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition-colors"
+            className="group flex flex-col items-center justify-center p-3 sm:p-4 rounded-lg border border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 animate-slide-in-up"
+            style={{ animationDelay: '0.4s' }}
             disabled={accounts.length === 0}
           >
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-100 flex items-center justify-center mb-2">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-100 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform duration-300">
               <Download className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
             </div>
-            <span className="text-xs sm:text-sm font-medium text-gray-900">Statement</span>
-            <span className="text-[10px] sm:text-xs text-gray-500 mt-1">Download PDF</span>
+            <span className="text-xs sm:text-sm font-medium text-gray-900 group-hover:text-blue-700 transition-colors duration-300 text-center">Statement</span>
+            <span className="text-[10px] sm:text-xs text-gray-500 mt-1 text-center">Download PDF</span>
           </button>
         </div>
       </div>
 
       {/* Search/Filter Bar */}
-      <div className="mb-4 flex items-center gap-2">
-        <div className="relative w-full max-w-xs">
+      <div className="mb-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+        <div className="relative w-full sm:max-w-xs">
           <span className="absolute left-3 top-2.5 text-gray-400">
             <Search className="w-4 h-4" />
           </span>
@@ -584,7 +588,7 @@ const UserAccounts = () => {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             {/* Individual Account Cards */}
             {filteredAccounts.map((account) => (
               <AccountCard
@@ -603,8 +607,8 @@ const UserAccounts = () => {
 
       {/* Account Details Modal */}
       {selectedAccount && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white rounded-lg shadow-lg max-w-lg w-full p-6 relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
+          <div className="bg-white rounded-lg shadow-lg max-w-lg w-full p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto">
             <button
               className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
               onClick={() => setSelectedAccount(null)}
@@ -612,20 +616,20 @@ const UserAccounts = () => {
             >
               <X className="w-5 h-5" />
             </button>
-            <h2 className="text-xl font-bold mb-2">{selectedAccount.account_type} Account</h2>
-            <p className="text-gray-500 mb-2">Account #: {selectedAccount.account_number}</p>
-            <p className="text-gray-500 mb-2">Routing #: {selectedAccount.routing_number}</p>
-            <p className="text-gray-900 font-semibold mb-4">Balance: ${selectedAccount.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+            <h2 className="text-lg sm:text-xl font-bold mb-2 pr-8">{selectedAccount.account_type} Account</h2>
+            <p className="text-sm sm:text-base text-gray-500 mb-2 break-all">Account #: {selectedAccount.account_number}</p>
+            <p className="text-sm sm:text-base text-gray-500 mb-2 break-all">Routing #: {selectedAccount.routing_number}</p>
+            <p className="text-sm sm:text-base text-gray-900 font-semibold mb-4 break-all">Balance: ${selectedAccount.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
             {/* Actions */}
-            <div className="flex flex-wrap gap-2 mb-4">
+            <div className="grid grid-cols-1 xs:grid-cols-2 gap-2 mb-4">
               <button className="btn btn-primary btn-sm" onClick={() => setActionModal('transfer')}>Transfer</button>
               <button className="btn btn-primary btn-sm" onClick={() => setActionModal('deposit')}>Deposit</button>
               <button className="btn btn-primary btn-sm" onClick={() => setActionModal('withdraw')}>Withdraw</button>
-              <button className="btn btn-outline btn-sm flex items-center" onClick={handleDownloadStatement}>
-                <Download className="w-4 h-4 mr-1" /> Download Statement
+              <button className="btn btn-outline btn-sm flex items-center justify-center" onClick={handleDownloadStatement}>
+                <Download className="w-4 h-4 mr-1" /> <span className="hidden xs:inline">Download Statement</span><span className="xs:hidden">Statement</span>
               </button>
               <button
-                className={`btn btn-outline btn-sm flex items-center ${selectedAccount.is_frozen ? 'text-green-600' : 'text-red-600'}`}
+                className={`btn btn-outline btn-sm flex items-center justify-center xs:col-span-2 ${selectedAccount.is_frozen ? 'text-green-600' : 'text-red-600'}`}
                 onClick={handleToggleFreeze}
                 disabled={freezeLoading}
               >
@@ -643,24 +647,24 @@ const UserAccounts = () => {
             </div>
             {/* Recent Transactions */}
             <div>
-              <h3 className="text-lg font-semibold mb-2">Recent Transactions</h3>
+              <h3 className="text-base sm:text-lg font-semibold mb-2">Recent Transactions</h3>
               {isModalLoading ? (
-                <div className="text-gray-500">Loading...</div>
+                <div className="text-gray-500 text-sm">Loading...</div>
               ) : recentTransactions.length === 0 ? (
-                <div className="text-gray-500">No recent transactions.</div>
+                <div className="text-gray-500 text-sm">No recent transactions.</div>
               ) : (
                 <div className="divide-y">
                   {recentTransactions.map(tx => (
-                    <div key={tx.id} className="py-2 flex flex-col md:flex-row md:justify-between md:items-center gap-2">
-                      <div>
-                        <div className="font-medium">{tx.description}</div>
+                    <div key={tx.id} className="py-2 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-sm sm:text-base truncate">{tx.description}</div>
                         <div className="text-xs text-gray-500">{format(new Date(tx.created_at), 'MMM d, yyyy')}</div>
                         {tx.category && <div className="text-xs text-blue-600">Category: {tx.category}</div>}
-                        {tx.note && <div className="text-xs text-gray-600 italic">Note: {tx.note}</div>}
+                        {tx.note && <div className="text-xs text-gray-600 italic truncate">Note: {tx.note}</div>}
                         {tx.reversed && <div className="text-xs text-red-500 font-semibold">Reversed</div>}
                       </div>
-                      <div className="flex items-center gap-2">
-                        <div className={`font-semibold ${tx.amount < 0 ? 'text-red-600' : 'text-green-600'}`}>{tx.amount < 0 ? '-' : '+'}${Math.abs(tx.amount).toFixed(2)}</div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <div className={`font-semibold text-sm sm:text-base ${tx.amount < 0 ? 'text-red-600' : 'text-green-600'}`}>{tx.amount < 0 ? '-' : '+'}${Math.abs(tx.amount).toFixed(2)}</div>
                         {!tx.reversed && (
                           <button
                             className="btn btn-outline btn-xs text-xs"
@@ -681,8 +685,8 @@ const UserAccounts = () => {
 
       {/* Action Modals */}
       {selectedAccount && actionModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white rounded-lg shadow-lg max-w-sm w-full p-6 relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
+          <div className="bg-white rounded-lg shadow-lg max-w-sm w-full p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto">
             <button
               className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
               onClick={() => setActionModal(null)}
@@ -690,7 +694,7 @@ const UserAccounts = () => {
             >
               <X className="w-5 h-5" />
             </button>
-            <h2 className="text-lg font-bold mb-4 capitalize">{actionModal} {actionModal === 'transfer' ? 'Funds' : ''}</h2>
+            <h2 className="text-base sm:text-lg font-bold mb-4 capitalize pr-8">{actionModal} {actionModal === 'transfer' ? 'Funds' : ''}</h2>
             <form onSubmit={handleActionSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Amount</label>
@@ -698,7 +702,7 @@ const UserAccounts = () => {
                   type="number"
                   min="0.01"
                   step="0.01"
-                  className="form-input w-full"
+                  className="form-input w-full text-sm sm:text-base"
                   value={actionAmount}
                   onChange={e => setActionAmount(e.target.value)}
                   required
@@ -708,7 +712,7 @@ const UserAccounts = () => {
                 <div>
                   <label className="block text-sm font-medium mb-1">To Account</label>
                   <select
-                    className="form-input w-full"
+                    className="form-input w-full text-sm sm:text-base"
                     value={transferTo}
                     onChange={e => setTransferTo(e.target.value)}
                     required
@@ -725,7 +729,7 @@ const UserAccounts = () => {
               <div>
                 <label className="block text-sm font-medium mb-1">Category</label>
                 <select
-                  className="form-input w-full"
+                  className="form-input w-full text-sm sm:text-base"
                   value={actionCategory}
                   onChange={e => setActionCategory(e.target.value)}
                 >
@@ -739,7 +743,7 @@ const UserAccounts = () => {
                 <label className="block text-sm font-medium mb-1">Note (optional)</label>
                 <input
                   type="text"
-                  className="form-input w-full"
+                  className="form-input w-full text-sm sm:text-base"
                   value={actionNote}
                   onChange={e => setActionNote(e.target.value)}
                   maxLength={100}
@@ -747,7 +751,7 @@ const UserAccounts = () => {
               </div>
               <button
                 type="submit"
-                className="btn btn-primary w-full"
+                className="btn btn-primary w-full text-sm sm:text-base"
                 disabled={actionLoading}
               >
                 {actionLoading ? 'Processing...' : 'Submit'}
@@ -759,8 +763,8 @@ const UserAccounts = () => {
 
       {/* Statement Download Modal */}
       {selectedAccount && showStatementModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white rounded-lg shadow-lg max-w-sm w-full p-6 relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
+          <div className="bg-white rounded-lg shadow-lg max-w-sm w-full p-4 sm:p-6 relative">
             <button
               className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
               onClick={() => setShowStatementModal(false)}
@@ -768,12 +772,12 @@ const UserAccounts = () => {
             >
               <X className="w-5 h-5" />
             </button>
-            <h2 className="text-lg font-bold mb-4">Download Statement</h2>
+            <h2 className="text-base sm:text-lg font-bold mb-4 pr-8">Download Statement</h2>
             <div className="mb-4">
               <label className="block text-sm font-medium mb-1">Start Date</label>
               <input
                 type="date"
-                className="form-input w-full"
+                className="form-input w-full text-sm sm:text-base"
                 value={statementStart}
                 onChange={e => setStatementStart(e.target.value)}
               />
@@ -782,13 +786,13 @@ const UserAccounts = () => {
               <label className="block text-sm font-medium mb-1">End Date</label>
               <input
                 type="date"
-                className="form-input w-full"
+                className="form-input w-full text-sm sm:text-base"
                 value={statementEnd}
                 onChange={e => setStatementEnd(e.target.value)}
               />
             </div>
             <button
-              className="btn btn-primary w-full"
+              className="btn btn-primary w-full text-sm sm:text-base"
               onClick={handleStatementDownloadConfirm}
               disabled={statementLoading}
             >
@@ -800,13 +804,13 @@ const UserAccounts = () => {
 
       {/* Confirmation Dialog for Large Transactions */}
       {showConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white rounded-lg shadow-lg max-w-xs w-full p-6 relative">
-            <h2 className="text-lg font-bold mb-4">Confirm Transaction</h2>
-            <p className="mb-4">Are you sure you want to proceed with this large transaction?</p>
-            <div className="flex gap-2">
-              <button className="btn btn-primary flex-1" onClick={() => { setShowConfirm(false); if (pendingAction) pendingAction(); }}>Yes</button>
-              <button className="btn btn-outline flex-1" onClick={() => setShowConfirm(false)}>No</button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
+          <div className="bg-white rounded-lg shadow-lg max-w-xs w-full p-4 sm:p-6 relative">
+            <h2 className="text-base sm:text-lg font-bold mb-4">Confirm Transaction</h2>
+            <p className="mb-4 text-sm sm:text-base">Are you sure you want to proceed with this large transaction?</p>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <button className="btn btn-primary flex-1 text-sm sm:text-base" onClick={() => { setShowConfirm(false); if (pendingAction) pendingAction(); }}>Yes</button>
+              <button className="btn btn-outline flex-1 text-sm sm:text-base" onClick={() => setShowConfirm(false)}>No</button>
             </div>
           </div>
         </div>
@@ -814,19 +818,19 @@ const UserAccounts = () => {
 
       {/* Password Dialog for Large Withdrawals */}
       {passwordRequired && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white rounded-lg shadow-lg max-w-xs w-full p-6 relative">
-            <h2 className="text-lg font-bold mb-4">Re-enter Password</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
+          <div className="bg-white rounded-lg shadow-lg max-w-xs w-full p-4 sm:p-6 relative">
+            <h2 className="text-base sm:text-lg font-bold mb-4">Re-enter Password</h2>
             <form onSubmit={handlePasswordSubmit} className="space-y-4">
               <input
                 type="password"
-                className="form-input w-full"
+                className="form-input w-full text-sm sm:text-base"
                 placeholder="Password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 required
               />
-              <button className="btn btn-primary w-full" type="submit" disabled={passwordLoading}>
+              <button className="btn btn-primary w-full text-sm sm:text-base" type="submit" disabled={passwordLoading}>
                 {passwordLoading ? 'Checking...' : 'Confirm'}
               </button>
             </form>

@@ -123,17 +123,17 @@ const UserNotifications = () => {
 
   return (
     <div>
-      <div className="mb-6 flex justify-between items-center">
+      <div className="mb-6 flex justify-between items-center animate-slide-in-up">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Notifications</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-2xl font-bold text-gray-900 animate-fade-in">Notifications</h1>
+          <p className="text-gray-600 mt-1 animate-fade-in-delay">
             {unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}
           </p>
         </div>
         {notifications.length > 0 && (
           <button
             onClick={markAllAsRead}
-            className="btn btn-outline flex items-center"
+            className="btn btn-outline flex items-center transform hover:scale-105 transition-all duration-200 hover:shadow-md animate-slide-in-right"
           >
             <Check className="w-4 h-4 mr-2" />
             Mark All as Read
@@ -142,28 +142,29 @@ const UserNotifications = () => {
       </div>
 
       {notifications.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-md p-8 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary-100 text-primary-600 mb-4">
+        <div className="bg-white rounded-lg shadow-md p-8 text-center animate-slide-in-up hover:shadow-lg transition-all duration-300">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary-100 text-primary-600 mb-4 animate-pulse-slow">
             <Bell className="w-8 h-8" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900">No notifications</h3>
-          <p className="mt-1 text-sm text-gray-500 max-w-md mx-auto">
+          <h3 className="text-lg font-medium text-gray-900 animate-fade-in">No notifications</h3>
+          <p className="mt-1 text-sm text-gray-500 max-w-md mx-auto animate-fade-in-delay">
             You don't have any notifications yet. We'll notify you about important account updates and activities.
           </p>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden animate-slide-in-up hover:shadow-lg transition-all duration-300">
           <div className="divide-y divide-gray-200">
-            {notifications.map((notification) => (
+            {notifications.map((notification, index) => (
               <div
                 key={notification.id}
-                className={`p-6 ${
+                className={`p-6 transition-all duration-300 animate-slide-in-up group ${
                   !notification.is_read ? 'bg-primary-50' : ''
                 }`}
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="flex">
                   <div
-                    className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
+                    className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110 ${
                       !notification.is_read
                         ? 'bg-primary-100 text-primary-600'
                         : 'bg-gray-100 text-gray-500'
@@ -174,7 +175,7 @@ const UserNotifications = () => {
                   <div className="ml-4 flex-1">
                     <div className="flex items-center justify-between">
                       <h3
-                        className={`text-lg font-medium ${
+                        className={`text-lg font-medium transition-colors duration-300 group-hover:text-primary-700 ${
                           !notification.is_read
                             ? 'text-primary-900'
                             : 'text-gray-900'
@@ -182,7 +183,7 @@ const UserNotifications = () => {
                       >
                         {notification.title}
                         {!notification.is_read && (
-                          <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
+                          <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 animate-pulse">
                             New
                           </span>
                         )}
@@ -196,7 +197,7 @@ const UserNotifications = () => {
                       {!notification.is_read && (
                         <button
                           onClick={() => markAsRead(notification.id)}
-                          className="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-800"
+                          className="inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-800 transform hover:scale-105 transition-all duration-200"
                         >
                           <Check className="w-4 h-4 mr-1" />
                           Mark as Read
@@ -204,7 +205,7 @@ const UserNotifications = () => {
                       )}
                       <button
                         onClick={() => deleteNotification(notification.id)}
-                        className="inline-flex items-center text-sm font-medium text-error-600 hover:text-error-800"
+                        className="inline-flex items-center text-sm font-medium text-error-600 hover:text-error-800 transform hover:scale-105 transition-all duration-200"
                       >
                         <Trash2 className="w-4 h-4 mr-1" />
                         Delete
