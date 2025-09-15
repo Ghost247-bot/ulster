@@ -137,6 +137,7 @@ const UserDashboard = () => {
   const [addAmount, setAddAmount] = useState('');
   const [showAddMoneyModal, setShowAddMoneyModal] = useState(false);
   const [upcomingBills, setBills] = useState<UpcomingBill[]>([]);
+  const [isBillsLoading, setIsBillsLoading] = useState(false);
   const [financialHealthScore] = useState(85);
   const [statCards, setStatCards] = useState<StatCard[]>([]);
   const [selectedBill, setSelectedBill] = useState<UpcomingBill | null>(null);
@@ -344,6 +345,57 @@ const UserDashboard = () => {
     };
 
     fetchDashboardData();
+  }, [user]);
+
+  // Real-time subscription for upcoming bills
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel('user_upcoming_bills_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'user_upcoming_bills',
+          filter: `user_id=eq.${user.id}`,
+        },
+        (payload) => {
+          console.log('Upcoming bills real-time update:', payload);
+          
+          // Refetch upcoming bills when there are changes
+          const fetchUpcomingBills = async () => {
+            try {
+              setIsBillsLoading(true);
+              const { data: billsData, error: billsError } = await supabase
+                .from('user_upcoming_bills')
+                .select('*')
+                .eq('user_id', user.id)
+                .eq('is_active', true)
+                .order('due_date', { ascending: true });
+
+              if (billsError) {
+                console.error('Error fetching updated upcoming bills:', billsError);
+                return;
+              }
+
+              setBills(billsData || []);
+            } catch (error) {
+              console.error('Error in real-time bills update:', error);
+            } finally {
+              setIsBillsLoading(false);
+            }
+          };
+
+          fetchUpcomingBills();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user]);
 
   const markNotificationAsRead = async (id: number) => {
@@ -775,26 +827,39 @@ const UserDashboard = () => {
             <div className="p-3 sm:p-4 border-b flex items-center justify-between">
               <h2 className="text-base sm:text-lg font-semibold text-gray-900">Upcoming Bills</h2>
               <div className="flex items-center gap-2">
-                <button 
-                  onClick={() => {
-                    console.log('Test button clicked');
-                    setSelectedBill({
-                      id: 'test',
-                      name: 'Test Bill',
-                      amount: 100,
-                      due_date: '2024-01-20',
-                      category: 'Test',
-                      is_paid: false,
-                      display_order: 0,
-                      is_active: true
-                    });
-                    setShowBillModal(true);
+                {isBillsLoading && (
+                  <div className="w-4 h-4 border-2 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
+                )}
+                <button
+                  onClick={async () => {
+                    if (!user || isBillsLoading) return;
+                    setIsBillsLoading(true);
+                    try {
+                      const { data: billsData, error: billsError } = await supabase
+                        .from('user_upcoming_bills')
+                        .select('*')
+                        .eq('user_id', user.id)
+                        .eq('is_active', true)
+                        .order('due_date', { ascending: true });
+
+                      if (billsError) {
+                        console.error('Error refreshing upcoming bills:', billsError);
+                        return;
+                      }
+
+                      setBills(billsData || []);
+                    } catch (error) {
+                      console.error('Error refreshing upcoming bills:', error);
+                    } finally {
+                      setIsBillsLoading(false);
+                    }
                   }}
-                  className="text-xs bg-blue-500 text-white px-2 py-1 rounded"
+                  className="p-1 text-gray-400 hover:text-primary-600 transition-colors"
+                  title="Refresh upcoming bills"
+                  disabled={isBillsLoading}
                 >
-                  Test Modal
+                  <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
-                <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
               </div>
             </div>
             <div className="divide-y">
