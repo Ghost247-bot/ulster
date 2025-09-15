@@ -44,10 +44,36 @@ export const useAuthStore = create<AuthState>((set) => ({
         
         if (profileError) {
           console.error('Error fetching profile:', profileError);
-          return { error: profileError };
-        }
-        
-        if (profileData) {
+          // If profile doesn't exist, create a basic one
+          if (profileError.code === 'PGRST116') {
+            console.log('Profile not found, creating basic profile for user:', data.user.id);
+            const { data: newProfile, error: createError } = await supabase
+              .from('profiles')
+              .insert({
+                id: data.user.id,
+                email: data.user.email,
+                first_name: '',
+                last_name: '',
+                is_admin: false,
+                role: 'user',
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              })
+              .select()
+              .single();
+            
+            if (createError) {
+              console.error('Error creating profile:', createError);
+              return { error: createError };
+            }
+            
+            if (newProfile) {
+              set({ profile: newProfile });
+            }
+          } else {
+            return { error: profileError };
+          }
+        } else if (profileData) {
           set({ profile: profileData });
         }
       }

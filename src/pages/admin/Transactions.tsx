@@ -286,7 +286,7 @@ const AdminTransactions = () => {
         const { error: notificationError } = await supabase.from('notifications').insert({
           user_id: accountData.user_id,
           title: `New ${formData.transaction_type} Transaction`,
-          message: `A ${formData.transaction_type} of $${formData.amount?.toFixed(2)} has been applied to your account: ${formData.description}`,
+          message: `A ${formData.transaction_type} of $${formData.amount?.toFixed(2)} has been applied to your account: ${formData.description}`
         });
 
         if (notificationError) {

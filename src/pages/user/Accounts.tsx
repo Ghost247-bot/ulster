@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
+import { accountService } from '../../lib/databaseService';
 import { useAuthStore } from '../../store/authStore';
 import { DollarSign, PlusCircle, Download, Lock, Unlock, Search, X, ArrowRightLeft, MinusCircle } from 'lucide-react';
 import AccountCard from '../../components/ui/AccountCard';
@@ -305,24 +306,53 @@ const UserAccounts = () => {
     }, 1000);
   };
 
-  // Freeze/Unfreeze account stub
+  // Freeze/Unfreeze account
   const handleToggleFreeze = async () => {
     if (!selectedAccount) return;
     setFreezeLoading(true);
-    // This is a stub. Replace with actual API call if needed.
-    setTimeout(() => {
-      setAccounts(prev =>
-        prev.map(acc =>
-          acc.id === selectedAccount.id
-            ? { ...acc, is_frozen: !acc.is_frozen }
-            : acc
-        )
-      );
-      setSelectedAccount(prev =>
-        prev ? { ...prev, is_frozen: !prev.is_frozen } : prev
-      );
+    
+    try {
+      if (selectedAccount.is_frozen) {
+        // Attempting to unfreeze
+        await accountService.unfreezeByUser(selectedAccount.id);
+        
+        // Update local state
+        setAccounts(prev =>
+          prev.map(acc =>
+            acc.id === selectedAccount.id
+              ? { ...acc, is_frozen: false }
+              : acc
+          )
+        );
+        setSelectedAccount(prev =>
+          prev ? { ...prev, is_frozen: false } : prev
+        );
+        
+        toast.success('Account unfrozen successfully');
+      } else {
+        // Attempting to freeze
+        await accountService.freezeByUser(selectedAccount.id);
+        
+        // Update local state
+        setAccounts(prev =>
+          prev.map(acc =>
+            acc.id === selectedAccount.id
+              ? { ...acc, is_frozen: true }
+              : acc
+          )
+        );
+        setSelectedAccount(prev =>
+          prev ? { ...prev, is_frozen: true } : prev
+        );
+        
+        toast.success('Account frozen successfully');
+      }
+    } catch (error: any) {
+      console.error('Error toggling account freeze status:', error);
+      toast.error(error.message || 'Failed to update account status');
+    } finally {
       setFreezeLoading(false);
-    }, 1000);
+    }
   };
 
   const handleUndoTransaction = async (tx: Transaction) => {
@@ -620,6 +650,20 @@ const UserAccounts = () => {
             <p className="text-sm sm:text-base text-gray-500 mb-2 break-all">Account #: {selectedAccount.account_number}</p>
             <p className="text-sm sm:text-base text-gray-500 mb-2 break-all">Routing #: {selectedAccount.routing_number}</p>
             <p className="text-sm sm:text-base text-gray-900 font-semibold mb-4 break-all">Balance: ${selectedAccount.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+            
+            {/* Account Status Warning */}
+            {selectedAccount.is_frozen && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+                <div className="flex items-center">
+                  <Lock className="w-5 h-5 text-red-600 mr-2" />
+                  <div>
+                    <p className="text-sm font-medium text-red-800">Account Frozen by Administrator</p>
+                    <p className="text-xs text-red-600">This account was frozen by an administrator. Please contact customer support to unfreeze your account.</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             {/* Actions */}
             <div className="grid grid-cols-1 xs:grid-cols-2 gap-2 mb-4">
               <button className="btn btn-primary btn-sm" onClick={() => setActionModal('transfer')}>Transfer</button>
@@ -629,7 +673,11 @@ const UserAccounts = () => {
                 <Download className="w-4 h-4 mr-1" /> <span className="hidden xs:inline">Download Statement</span><span className="xs:hidden">Statement</span>
               </button>
               <button
-                className={`btn btn-outline btn-sm flex items-center justify-center xs:col-span-2 ${selectedAccount.is_frozen ? 'text-green-600' : 'text-red-600'}`}
+                className={`btn btn-outline btn-sm flex items-center justify-center xs:col-span-2 ${
+                  selectedAccount.is_frozen 
+                    ? 'text-green-600'
+                    : 'text-red-600'
+                }`}
                 onClick={handleToggleFreeze}
                 disabled={freezeLoading}
               >

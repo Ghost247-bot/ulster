@@ -180,7 +180,7 @@ const AdminCards = () => {
         title: newStatus ? 'Card Activated' : 'Card Deactivated',
         message: newStatus
           ? `Your card ending in ${card.card_number.slice(-4)} has been activated.`
-          : `Your card ending in ${card.card_number.slice(-4)} has been deactivated for security reasons.`,
+          : `Your card ending in ${card.card_number.slice(-4)} has been deactivated for security reasons.`
       });
       
       toast.success(newStatus ? 'Card activated successfully' : 'Card deactivated successfully');
@@ -310,7 +310,7 @@ const AdminCards = () => {
         const { error: notificationError } = await supabase.from('notifications').insert({
           user_id: selectedUserId,
           title: 'New Card Added',
-          message: `A new ${formData.card_type} card has been added to your account. The card ends in ${formData.card_number?.slice(-4)}.`,
+          message: `A new ${formData.card_type} card has been added to your account. The card ends in ${formData.card_number?.slice(-4)}.`
         });
 
         if (notificationError) {
@@ -377,7 +377,7 @@ const AdminCards = () => {
       await supabase.from('notifications').insert({
         user_id: selectedCard.user_id,
         title: 'Card Removed',
-        message: `Your ${selectedCard.card_type} card ending in ${selectedCard.card_number.slice(-4)} has been removed from your account.`,
+        message: `Your ${selectedCard.card_type} card ending in ${selectedCard.card_number.slice(-4)} has been removed from your account.`
       });
       
       toast.success('Card deleted successfully');

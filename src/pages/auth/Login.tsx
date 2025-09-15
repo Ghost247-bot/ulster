@@ -138,11 +138,18 @@ const Login = () => {
               {isLoading ? 'Signing in...' : 'Sign in'}
             </button>
           </form>
-          <div className="mt-6 text-center text-sm">
-            <span className="text-gray-600">Don't have an account?</span>
-            <Link to="/register" className="ml-1 font-medium text-[#1B4D3E] hover:text-[#145033]">
-              Create one now
-            </Link>
+          <div className="mt-6 text-center text-sm space-y-2">
+            <div>
+              <span className="text-gray-600">Don't have an account?</span>
+              <Link to="/register" className="ml-1 font-medium text-[#1B4D3E] hover:text-[#145033]">
+                Create one now
+              </Link>
+            </div>
+            <div>
+              <Link to="/create-user" className="text-sm font-medium text-[#1B4D3E] hover:text-[#145033]">
+                Create Test Users
+              </Link>
+            </div>
           </div>
         </div>
       </div>

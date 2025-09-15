@@ -16,7 +16,10 @@ interface Notification {
   user_id: string;
   title: string;
   message: string;
+  type?: string;
+  is_read?: boolean;
   created_at?: string;
+  updated_at?: string;
 }
 
 export default function AdminNotifications() {
@@ -29,6 +32,7 @@ export default function AdminNotifications() {
     user_id: '',
     title: '',
     message: '',
+    is_read: false,
     created_at: new Date().toISOString()
   });
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -82,6 +86,7 @@ export default function AdminNotifications() {
       user_id: notification.user_id,
       title: notification.title,
       message: notification.message,
+      is_read: notification.is_read || false,
       created_at: notification.created_at || new Date().toISOString()
     });
     setShowForm(true);
@@ -106,7 +111,7 @@ export default function AdminNotifications() {
             user_id: form.user_id,
             title: form.title,
             message: form.message,
-            created_at: form.created_at
+            is_read: form.is_read
           })
           .eq('id', editingNotification.id);
 
@@ -123,8 +128,8 @@ export default function AdminNotifications() {
             user_id: form.user_id,
             title: form.title,
             message: form.message,
-            created_at: form.created_at,
-            is_read: false
+            is_read: form.is_read,
+            created_at: form.created_at
           }]);
 
         if (error) {
@@ -224,6 +229,27 @@ export default function AdminNotifications() {
             <textarea name="message" value={form.message} onChange={handleChange} required className="w-full border p-2 rounded" />
           </div>
           <div>
+            <label className="block mb-1 font-medium">Type</label>
+            <select name="type" value={form.type} onChange={handleChange} required className="w-full border p-2 rounded">
+              <option value="info">Info</option>
+              <option value="warning">Warning</option>
+              <option value="error">Error</option>
+              <option value="success">Success</option>
+            </select>
+          </div>
+          <div>
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                name="is_read"
+                checked={form.is_read}
+                onChange={(e) => setForm({ ...form, is_read: e.target.checked })}
+                className="rounded"
+              />
+              <span className="font-medium">Mark as read</span>
+            </label>
+          </div>
+          <div>
             <label className="block mb-1 font-medium">Date</label>
             <div className="relative">
               <input
@@ -263,7 +289,22 @@ export default function AdminNotifications() {
           >
             <BellRing className="w-6 h-6 text-gray-500 mr-3 flex-shrink-0" />
             <div className="flex-1">
-              <h3 className="font-medium text-gray-800">{n.title}</h3>
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="font-medium text-gray-800">{n.title}</h3>
+                <span className={`px-2 py-1 text-xs rounded-full ${
+                  n.type === 'error' ? 'bg-red-100 text-red-800' :
+                  n.type === 'warning' ? 'bg-yellow-100 text-yellow-800' :
+                  n.type === 'success' ? 'bg-green-100 text-green-800' :
+                  'bg-blue-100 text-blue-800'
+                }`}>
+                  {n.type}
+                </span>
+                {n.is_read && (
+                  <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">
+                    Read
+                  </span>
+                )}
+              </div>
               <p className="text-sm text-gray-700 mt-1">{n.message}</p>
               <div className="text-xs text-gray-400 mt-1">User ID: {n.user_id}</div>
               <div className="text-xs text-gray-400 mt-1">

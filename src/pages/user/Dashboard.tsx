@@ -16,6 +16,7 @@ import {
 } from 'chart.js';
 import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store/authStore';
+import { useStockData } from '../../hooks/useStockData';
 import { 
   AlertTriangle, 
   CreditCard, 
@@ -25,7 +26,21 @@ import {
   TrendingUp,
   Bell,
   FileText,
-  Target
+  Target,
+  Plus,
+  X,
+  CheckCircle,
+  DollarSign,
+  ArrowUpRight,
+  ArrowDownRight,
+  Calendar,
+  Clock,
+  Shield,
+  BarChart3,
+  ArrowRightLeft,
+  TrendingDown,
+  Activity,
+  Award
 } from 'lucide-react';
 import Loading from '../../components/ui/Loading';
 import BannerDisplay from '../../components/ui/BannerDisplay';
@@ -56,8 +71,10 @@ interface Notification {
   id: number;
   title: string;
   message: string;
+  type: string;
   is_read: boolean;
   created_at: string;
+  updated_at: string;
 }
 
 interface Budget {
@@ -74,6 +91,31 @@ interface FinancialGoal {
   deadline: string;
 }
 
+
+interface StatCard {
+  id: string;
+  title: string;
+  value: string;
+  change_value: number;
+  change_type: 'positive' | 'negative' | 'neutral';
+  icon_name: string;
+  color: string;
+  display_order: number;
+  is_active: boolean;
+}
+
+interface UpcomingBill {
+  id: string;
+  name: string;
+  amount: number;
+  due_date: string;
+  category: string;
+  is_paid: boolean;
+  display_order: number;
+  is_active: boolean;
+}
+
+
 const UserDashboard = () => {
   const { user, profile } = useAuthStore();
   const [accounts, setAccounts] = useState<Account[]>([]);
@@ -86,10 +128,86 @@ const UserDashboard = () => {
     { category: 'Transportation', spent: 200, limit: 300 },
     { category: 'Entertainment', spent: 150, limit: 200 },
   ]);
-  const [goals] = useState<FinancialGoal[]>([
+  const [goals, setGoals] = useState<FinancialGoal[]>([
     { id: 1, title: 'Emergency Fund', target: 10000, current: 7500, deadline: '2024-12-31' },
     { id: 2, title: 'New Car', target: 25000, current: 15000, deadline: '2025-06-30' },
   ]);
+  const [selectedGoal, setSelectedGoal] = useState<FinancialGoal | null>(null);
+  const [showGoalModal, setShowGoalModal] = useState(false);
+  const [addAmount, setAddAmount] = useState('');
+  const [showAddMoneyModal, setShowAddMoneyModal] = useState(false);
+  const [upcomingBills, setBills] = useState<UpcomingBill[]>([]);
+  const [financialHealthScore] = useState(85);
+  const [statCards, setStatCards] = useState<StatCard[]>([]);
+  const [selectedBill, setSelectedBill] = useState<UpcomingBill | null>(null);
+  const [showBillModal, setShowBillModal] = useState(false);
+  
+  // Real-time stock data
+  const { 
+    stockData: marketData, 
+    isLoading: isMarketLoading, 
+    error: marketError, 
+    lastUpdated: marketLastUpdated,
+    refresh: refreshMarketData 
+  } = useStockData({
+    symbols: ['AAPL', 'TSLA', 'AMZN', 'GOOGL', 'MSFT', 'META', 'NVDA', 'NFLX', 'AMD', 'INTC', 'GOLD', 'SPY', 'QQQ'],
+    refreshInterval: 30000, // 30 seconds
+    autoRefresh: true,
+  });
+
+  // Mock data initialization
+  useEffect(() => {
+    // Upcoming bills will be fetched from database in the main useEffect
+    // Market data is now fetched in real-time using the useStockData hook
+  }, []);
+
+  // Icon mapping for statistics cards
+  const getIconComponent = (iconName: string) => {
+    const iconMap: { [key: string]: React.ReactNode } = {
+      'TrendingUp': <TrendingUp className="w-5 h-5" />,
+      'TrendingDown': <TrendingDown className="w-5 h-5" />,
+      'PiggyBank': <PiggyBank className="w-5 h-5" />,
+      'Award': <Award className="w-5 h-5" />,
+      'DollarSign': <DollarSign className="w-5 h-5" />,
+      'BarChart3': <BarChart3 className="w-5 h-5" />,
+      'Activity': <Activity className="w-5 h-5" />,
+      'Shield': <Shield className="w-5 h-5" />,
+    };
+    return iconMap[iconName] || <BarChart3 className="w-5 h-5" />;
+  };
+
+  // Goal interaction functions
+  const handleGoalClick = (goal: FinancialGoal) => {
+    setSelectedGoal(goal);
+    setShowGoalModal(true);
+  };
+
+  const handleBillClick = (bill: UpcomingBill) => {
+    console.log('Bill clicked:', bill);
+    setSelectedBill(bill);
+    setShowBillModal(true);
+    console.log('Modal should be showing');
+  };
+
+  const handleAddMoney = (goalId: number, amount: number) => {
+    setGoals(prevGoals => 
+      prevGoals.map(goal => 
+        goal.id === goalId 
+          ? { ...goal, current: Math.min(goal.current + amount, goal.target) }
+          : goal
+      )
+    );
+    setAddAmount('');
+    setShowAddMoneyModal(false);
+  };
+
+  const getProgressPercentage = (current: number, target: number) => {
+    return Math.min((current / target) * 100, 100);
+  };
+
+  const isGoalCompleted = (current: number, target: number) => {
+    return current >= target;
+  };
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -161,6 +279,62 @@ const UserDashboard = () => {
         
         console.log('Notifications fetched:', notificationsData);
         setNotifications(notificationsData || []);
+
+        // Fetch user statistics cards
+        const { data: statCardsData, error: statCardsError } = await supabase
+          .from('user_statistics_cards')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('is_active', true)
+          .order('display_order', { ascending: true });
+
+        if (statCardsError) {
+          console.error('Error fetching statistics cards:', statCardsError);
+          throw statCardsError;
+        }
+        
+        console.log('Statistics cards fetched:', statCardsData);
+        setStatCards(statCardsData || []);
+
+        // Fetch upcoming bills
+        const { data: billsData, error: billsError } = await supabase
+          .from('user_upcoming_bills')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('is_active', true)
+          .order('due_date', { ascending: true });
+
+        if (billsError) {
+          console.error('Error fetching upcoming bills:', billsError);
+          throw billsError;
+        }
+
+        // Fetch financial goals
+        const { data: goalsData, error: goalsError } = await supabase
+          .from('user_financial_goals')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('is_active', true)
+          .order('display_order', { ascending: true });
+
+        if (goalsError) {
+          console.error('Error fetching financial goals:', goalsError);
+          throw goalsError;
+        }
+        
+        console.log('Financial goals fetched:', goalsData);
+        // Convert database format to component format
+        const processedGoals = (goalsData || []).map(goal => ({
+          id: parseInt(goal.id.replace(/-/g, '').substring(0, 8), 16), // Convert UUID to number for compatibility
+          title: goal.title,
+          target: goal.target_amount,
+          current: goal.current_amount,
+          deadline: goal.deadline
+        }));
+        setGoals(processedGoals);
+        
+        console.log('Upcoming bills fetched:', billsData);
+        setBills(billsData || []);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
@@ -277,7 +451,7 @@ const UserDashboard = () => {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4">
         <Link 
           to="/cards" 
           className="group p-3 sm:p-4 bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center gap-2 transform hover:scale-105 hover:-translate-y-1 animate-slide-in-up"
@@ -318,6 +492,61 @@ const UserDashboard = () => {
           </div>
           <span className="text-xs sm:text-sm font-medium capitalize group-hover:text-purple-700 transition-colors duration-300 text-center">Investments</span>
         </Link>
+        <button 
+          className="group p-3 sm:p-4 bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center gap-2 transform hover:scale-105 hover:-translate-y-1 animate-slide-in-up"
+          style={{ animationDelay: '0.5s' }}
+          onClick={() => {/* Add transfer modal logic here */}}
+        >
+          <div className="p-2 rounded-full bg-indigo-100 group-hover:bg-indigo-200 transition-colors duration-300">
+            <ArrowRightLeft className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600 group-hover:scale-110 transition-transform duration-300" />
+          </div>
+          <span className="text-xs sm:text-sm font-medium capitalize group-hover:text-indigo-700 transition-colors duration-300 text-center">Transfer</span>
+        </button>
+      </div>
+
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 animate-slide-in-up">
+        {statCards.map((card, index) => (
+          <div 
+            key={card.id}
+            className="bg-white rounded-xl p-4 sm:p-6 shadow-sm hover:shadow-lg transition-all duration-300 group animate-fade-in"
+            style={{ animationDelay: `${index * 0.1}s` }}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className={`p-2 rounded-lg ${
+                card.color === 'green' ? 'bg-green-100 text-green-600' :
+                card.color === 'blue' ? 'bg-blue-100 text-blue-600' :
+                card.color === 'purple' ? 'bg-purple-100 text-purple-600' :
+                card.color === 'orange' ? 'bg-orange-100 text-orange-600' :
+                card.color === 'red' ? 'bg-red-100 text-red-600' :
+                card.color === 'yellow' ? 'bg-yellow-100 text-yellow-600' :
+                card.color === 'indigo' ? 'bg-indigo-100 text-indigo-600' :
+                'bg-gray-100 text-gray-600'
+              } group-hover:scale-110 transition-transform duration-300`}>
+                {getIconComponent(card.icon_name)}
+              </div>
+              <div className={`flex items-center text-sm font-medium ${
+                card.change_type === 'positive' ? 'text-green-600' : 
+                card.change_type === 'negative' ? 'text-red-600' : 'text-gray-600'
+              }`}>
+                {card.change_type === 'positive' ? (
+                  <ArrowUpRight className="w-4 h-4 mr-1" />
+                ) : card.change_type === 'negative' ? (
+                  <ArrowDownRight className="w-4 h-4 mr-1" />
+                ) : null}
+                {Math.abs(card.change_value)}%
+              </div>
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-sm font-medium text-gray-600 group-hover:text-gray-800 transition-colors duration-300">
+                {card.title}
+              </h3>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900 group-hover:text-primary-700 transition-colors duration-300">
+                {card.value}
+              </p>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Main Content Grid */}
@@ -371,6 +600,7 @@ const UserDashboard = () => {
               ))}
             </div>
           </div>
+
 
           {/* Accounts List */}
           <div className="bg-white rounded-xl shadow-sm overflow-hidden animate-slide-in-up hover:shadow-lg transition-all duration-300">
@@ -457,47 +687,573 @@ const UserDashboard = () => {
               </Link>
             </div>
             <div className="p-3 sm:p-4 space-y-3 sm:space-y-4">
-              {goals.map((goal, index) => (
-                <div key={goal.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-slide-in-up group" style={{ animationDelay: `${index * 0.1}s` }}>
-                  <div className="flex items-center gap-2 sm:gap-3 group-hover:translate-x-1 transition-transform duration-300 flex-1 min-w-0">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-                      <Target className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600" />
+              {goals.map((goal, index) => {
+                const progressPercentage = getProgressPercentage(goal.current, goal.target);
+                const isCompleted = isGoalCompleted(goal.current, goal.target);
+                
+                return (
+                  <div 
+                    key={goal.id} 
+                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-slide-in-up group cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-all duration-300" 
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                    onClick={() => handleGoalClick(goal)}
+                  >
+                    <div className="flex items-center gap-2 sm:gap-3 group-hover:translate-x-1 transition-transform duration-300 flex-1 min-w-0">
+                      <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0 ${
+                        isCompleted ? 'bg-green-100' : 'bg-primary-100'
+                      }`}>
+                        {isCompleted ? (
+                          <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
+                        ) : (
+                          <Target className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h3 className={`font-medium capitalize group-hover:text-primary-700 transition-colors duration-300 text-sm sm:text-base truncate ${
+                            isCompleted ? 'text-green-700' : 'text-gray-900'
+                          }`}>
+                            {goal.title}
+                          </h3>
+                          {isCompleted && (
+                            <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">
+                              Completed!
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs sm:text-sm text-gray-500 font-medium">
+                          ${goal.current.toLocaleString()} / ${goal.target.toLocaleString()}
+                        </p>
+                        <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1">
+                          <div 
+                            className={`h-1.5 rounded-full transition-all duration-500 ${
+                              isCompleted ? 'bg-green-500' : 'bg-primary-600'
+                            }`}
+                            style={{ width: `${progressPercentage}%` }}
+                          />
+                        </div>
+                        <p className="text-xs text-gray-400 mt-1">
+                          {progressPercentage.toFixed(1)}% complete
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-gray-900 capitalize group-hover:text-primary-700 transition-colors duration-300 text-sm sm:text-base truncate">{goal.title}</h3>
-                      <p className="text-xs sm:text-sm text-gray-500 font-medium">
-                        ${goal.current.toLocaleString()} / ${goal.target.toLocaleString()}
-                      </p>
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 group-hover:scale-110 transition-transform duration-300 flex-shrink-0 mx-auto sm:mx-0 relative">
+                      <Doughnut
+                        data={{
+                          labels: ['Progress', 'Remaining'],
+                          datasets: [
+                            {
+                              data: [goal.current, Math.max(goal.target - goal.current, 0)],
+                              backgroundColor: isCompleted ? ['#10B981', '#E5E7EB'] : ['#4F46E5', '#E5E7EB'],
+                              borderWidth: 0,
+                            },
+                          ],
+                        }}
+                        options={{
+                          cutout: '80%',
+                          plugins: {
+                            legend: {
+                              display: false,
+                            },
+                          },
+                        }}
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-xs font-semibold text-gray-600">
+                          {Math.round(progressPercentage)}%
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 group-hover:scale-110 transition-transform duration-300 flex-shrink-0 mx-auto sm:mx-0">
-                    <Doughnut
-                      data={{
-                        labels: ['Progress', 'Remaining'],
-                        datasets: [
-                          {
-                            data: [goal.current, goal.target - goal.current],
-                            backgroundColor: ['#4F46E5', '#E5E7EB'],
-                            borderWidth: 0,
-                          },
-                        ],
-                      }}
-                      options={{
-                        cutout: '80%',
-                        plugins: {
-                          legend: {
-                            display: false,
-                          },
-                        },
-                      }}
-                    />
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Upcoming Bills */}
+          <div className="bg-white rounded-xl shadow-sm overflow-hidden animate-slide-in-right hover:shadow-lg transition-all duration-300">
+            <div className="p-3 sm:p-4 border-b flex items-center justify-between">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900">Upcoming Bills</h2>
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => {
+                    console.log('Test button clicked');
+                    setSelectedBill({
+                      id: 'test',
+                      name: 'Test Bill',
+                      amount: 100,
+                      due_date: '2024-01-20',
+                      category: 'Test',
+                      is_paid: false,
+                      display_order: 0,
+                      is_active: true
+                    });
+                    setShowBillModal(true);
+                  }}
+                  className="text-xs bg-blue-500 text-white px-2 py-1 rounded"
+                >
+                  Test Modal
+                </button>
+                <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+              </div>
+            </div>
+            <div className="divide-y">
+              {upcomingBills.length === 0 && (
+                <div className="p-4 text-center text-gray-500">
+                  No upcoming bills found
+                </div>
+              )}
+              {upcomingBills.map((bill, index) => (
+                <div
+                  key={bill.id}
+                  className="p-3 sm:p-4 hover:bg-gray-50 transition-all duration-300 animate-slide-in-up group cursor-pointer"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                  onClick={() => handleBillClick(bill)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3 group-hover:translate-x-1 transition-transform duration-300">
+                      <div className="p-2 rounded-full bg-yellow-100 text-yellow-600 group-hover:scale-110 transition-transform duration-300">
+                        <Clock className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-gray-900 capitalize group-hover:text-primary-700 transition-colors duration-300 text-sm sm:text-base truncate">
+                          {bill.name}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-gray-500 font-medium capitalize">
+                          {bill.category} • Due {format(new Date(bill.due_date), 'MMM d')}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right group-hover:translate-x-1 transition-transform duration-300 flex-shrink-0">
+                      <p className="font-semibold text-sm sm:text-base text-gray-900">
+                        ${bill.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </p>
+                      <button 
+                        className="text-xs text-primary-600 hover:text-primary-700 font-medium transition-colors duration-200"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Handle pay now action
+                        }}
+                      >
+                        Pay Now
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           </div>
+
+          {/* Market Overview */}
+          <div className="bg-white rounded-xl shadow-sm overflow-hidden animate-slide-in-right hover:shadow-lg transition-all duration-300">
+            <div className="p-3 sm:p-4 border-b flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <h2 className="text-base sm:text-lg font-semibold text-gray-900">Market Overview</h2>
+                {isMarketLoading && (
+                  <div className="w-4 h-4 border-2 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                {marketLastUpdated && (
+                  <span className="text-xs text-gray-500">
+                    {new Date(marketLastUpdated).toLocaleTimeString()}
+                  </span>
+                )}
+                <button
+                  onClick={refreshMarketData}
+                  className="p-1 text-gray-400 hover:text-primary-600 transition-colors"
+                  title="Refresh market data"
+                >
+                  <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" />
+                </button>
+              </div>
+            </div>
+            
+            {marketError ? (
+              <div className="p-4 text-center">
+                <p className="text-sm text-red-600 mb-2">Failed to load market data</p>
+                <button
+                  onClick={refreshMarketData}
+                  className="text-xs text-primary-600 hover:text-primary-700 font-medium"
+                >
+                  Try again
+                </button>
+              </div>
+            ) : (
+              <>
+                {/* Market Summary */}
+                {marketData.length > 0 && (
+                  <div className="p-4 bg-gray-50 border-b">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                      <div>
+                        <p className="text-xs text-gray-500 font-medium">S&P 500</p>
+                        <p className="text-sm font-semibold text-gray-900">
+                          {marketData.find(s => s.symbol === 'SPY')?.price.toFixed(2) || 'N/A'}
+                        </p>
+                        <p className={`text-xs font-medium ${
+                          (marketData.find(s => s.symbol === 'SPY')?.change || 0) >= 0 ? 'text-green-600' : 'text-red-600'
+                        }`}>
+                          {marketData.find(s => s.symbol === 'SPY')?.changePercent.toFixed(2) || '0.00'}%
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 font-medium">NASDAQ</p>
+                        <p className="text-sm font-semibold text-gray-900">
+                          {marketData.find(s => s.symbol === 'QQQ')?.price.toFixed(2) || 'N/A'}
+                        </p>
+                        <p className={`text-xs font-medium ${
+                          (marketData.find(s => s.symbol === 'QQQ')?.change || 0) >= 0 ? 'text-green-600' : 'text-red-600'
+                        }`}>
+                          {marketData.find(s => s.symbol === 'QQQ')?.changePercent.toFixed(2) || '0.00'}%
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 font-medium">Gold</p>
+                        <p className="text-sm font-semibold text-gray-900">
+                          {marketData.find(s => s.symbol === 'GOLD')?.price.toFixed(2) || 'N/A'}
+                        </p>
+                        <p className={`text-xs font-medium ${
+                          (marketData.find(s => s.symbol === 'GOLD')?.change || 0) >= 0 ? 'text-green-600' : 'text-red-600'
+                        }`}>
+                          {marketData.find(s => s.symbol === 'GOLD')?.changePercent.toFixed(2) || '0.00'}%
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 font-medium">Tesla</p>
+                        <p className="text-sm font-semibold text-gray-900">
+                          {marketData.find(s => s.symbol === 'TSLA')?.price.toFixed(2) || 'N/A'}
+                        </p>
+                        <p className={`text-xs font-medium ${
+                          (marketData.find(s => s.symbol === 'TSLA')?.change || 0) >= 0 ? 'text-green-600' : 'text-red-600'
+                        }`}>
+                          {marketData.find(s => s.symbol === 'TSLA')?.changePercent.toFixed(2) || '0.00'}%
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              <div className="divide-y max-h-96 overflow-y-auto">
+                {marketData.length === 0 && isMarketLoading ? (
+                  <div className="p-4 text-center text-gray-500">
+                    <div className="w-6 h-6 border-2 border-gray-300 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                    <p className="text-sm">Loading market data...</p>
+                  </div>
+                ) : (
+                  marketData.map((stock, index) => (
+                    <div
+                      key={stock.symbol}
+                      className="p-3 sm:p-4 hover:bg-gray-50 transition-all duration-300 animate-slide-in-up group"
+                      style={{ animationDelay: `${index * 0.05}s` }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3 group-hover:translate-x-1 transition-transform duration-300">
+                          <div className={`p-2 rounded-full group-hover:scale-110 transition-transform duration-300 ${
+                            stock.symbol === 'GOLD' ? 'bg-yellow-100 text-yellow-600' :
+                            stock.symbol === 'SPY' || stock.symbol === 'QQQ' ? 'bg-purple-100 text-purple-600' :
+                            stock.symbol === 'TSLA' ? 'bg-red-100 text-red-600' :
+                            stock.symbol === 'AAPL' ? 'bg-gray-100 text-gray-600' :
+                            stock.symbol === 'AMZN' ? 'bg-orange-100 text-orange-600' :
+                            'bg-blue-100 text-blue-600'
+                          }`}>
+                            <Activity className="w-4 h-4" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-medium text-gray-900 group-hover:text-primary-700 transition-colors duration-300 text-sm sm:text-base truncate">
+                              {stock.symbol}
+                            </h3>
+                            <p className="text-xs sm:text-sm text-gray-500 font-medium truncate">
+                              {stock.name}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right group-hover:translate-x-1 transition-transform duration-300 flex-shrink-0">
+                          <p className="font-semibold text-sm sm:text-base text-gray-900">
+                            ${stock.price.toFixed(2)}
+                          </p>
+                          <p className={`text-xs font-medium ${
+                            stock.change >= 0 ? 'text-green-600' : 'text-red-600'
+                          }`}>
+                            {stock.change >= 0 ? '+' : ''}{stock.change.toFixed(2)} ({stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%)
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+              </>
+            )}
+          </div>
+
+          {/* Financial Health Score */}
+          <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl p-4 sm:p-6 text-white animate-slide-in-right hover:shadow-lg transition-all duration-300">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-white/20">
+                  <Shield className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-base sm:text-lg font-semibold">Financial Health</h2>
+                  <p className="text-xs sm:text-sm text-indigo-100">Your overall score</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl sm:text-3xl font-bold">{financialHealthScore}</div>
+                <div className="text-xs sm:text-sm text-indigo-100">out of 100</div>
+              </div>
+            </div>
+            <div className="w-full bg-white/20 rounded-full h-2 mb-3">
+              <div 
+                className="bg-white rounded-full h-2 transition-all duration-1000 ease-out"
+                style={{ width: `${financialHealthScore}%` }}
+              />
+            </div>
+            <div className="flex items-center justify-between text-xs sm:text-sm">
+              <span className="text-indigo-100">Excellent</span>
+              <span className="text-indigo-100">Keep it up!</span>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Goal Details Modal */}
+      {showGoalModal && selectedGoal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md relative animate-fade-in-up">
+            <button
+              className="absolute top-4 right-4 text-gray-500 hover:text-black text-2xl font-bold transition-colors duration-200"
+              onClick={() => setShowGoalModal(false)}
+              aria-label="Close"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                  isGoalCompleted(selectedGoal.current, selectedGoal.target) ? 'bg-green-100' : 'bg-primary-100'
+                }`}>
+                  {isGoalCompleted(selectedGoal.current, selectedGoal.target) ? (
+                    <CheckCircle className="w-6 h-6 text-green-600" />
+                  ) : (
+                    <Target className="w-6 h-6 text-primary-600" />
+                  )}
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold">{selectedGoal.title}</h3>
+                  <p className="text-sm text-gray-500">Deadline: {new Date(selectedGoal.deadline).toLocaleDateString()}</p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex justify-between text-sm">
+                  <span>Progress</span>
+                  <span>{getProgressPercentage(selectedGoal.current, selectedGoal.target).toFixed(1)}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className={`h-2 rounded-full transition-all duration-500 ${
+                      isGoalCompleted(selectedGoal.current, selectedGoal.target) ? 'bg-green-500' : 'bg-primary-600'
+                    }`}
+                    style={{ width: `${getProgressPercentage(selectedGoal.current, selectedGoal.target)}%` }}
+                  />
+                </div>
+                <div className="flex justify-between text-sm text-gray-600">
+                  <span>${selectedGoal.current.toLocaleString()}</span>
+                  <span>${selectedGoal.target.toLocaleString()}</span>
+                </div>
+                <div className="text-sm text-gray-500">
+                  ${(selectedGoal.target - selectedGoal.current).toLocaleString()} remaining
+                </div>
+              </div>
+
+              <div className="flex gap-2 pt-4">
+                <button
+                  onClick={() => {
+                    setShowGoalModal(false);
+                    setShowAddMoneyModal(true);
+                  }}
+                  className="flex-1 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200 flex items-center justify-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Money
+                </button>
+                <button
+                  onClick={() => setShowGoalModal(false)}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Money Modal */}
+      {showAddMoneyModal && selectedGoal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md relative animate-fade-in-up">
+            <button
+              className="absolute top-4 right-4 text-gray-500 hover:text-black text-2xl font-bold transition-colors duration-200"
+              onClick={() => setShowAddMoneyModal(false)}
+              aria-label="Close"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center">
+                  <DollarSign className="w-6 h-6 text-primary-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold">Add Money to {selectedGoal.title}</h3>
+                  <p className="text-sm text-gray-500">Current: ${selectedGoal.current.toLocaleString()}</p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Amount to Add
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                    <input
+                      type="number"
+                      value={addAmount}
+                      onChange={(e) => setAddAmount(e.target.value)}
+                      className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                      placeholder="0.00"
+                      min="0"
+                      max={selectedGoal.target - selectedGoal.current}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2">
+                  {[100, 500, 1000].map((amount) => (
+                    <button
+                      key={amount}
+                      onClick={() => setAddAmount(amount.toString())}
+                      className="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                    >
+                      ${amount}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-2 pt-4">
+                <button
+                  onClick={() => {
+                    const amount = parseFloat(addAmount);
+                    if (amount > 0) {
+                      handleAddMoney(selectedGoal.id, amount);
+                    }
+                  }}
+                  disabled={!addAmount || parseFloat(addAmount) <= 0}
+                  className="flex-1 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add ${addAmount || '0'}
+                </button>
+                <button
+                  onClick={() => {
+                    setShowAddMoneyModal(false);
+                    setAddAmount('');
+                  }}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bill Details Modal */}
+      {console.log('Modal state:', { showBillModal, selectedBill })}
+      {showBillModal && selectedBill && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4">
+          <div className="bg-red-500 rounded-xl shadow-2xl p-6 w-full max-w-md relative">
+            <button
+              className="absolute top-4 right-4 text-gray-500 hover:text-black text-2xl font-bold transition-colors duration-200"
+              onClick={() => setShowBillModal(false)}
+              aria-label="Close"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            <div className="mb-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                  <Clock className="w-6 h-6" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900 capitalize">{selectedBill.name}</h2>
+                  <p className="text-sm text-gray-500 capitalize">{selectedBill.category}</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-gray-600 font-medium">Amount Due</span>
+                  <span className="text-xl font-bold text-gray-900">
+                    ${selectedBill.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-gray-600 font-medium">Due Date</span>
+                  <span className="text-gray-900 font-medium">
+                    {format(new Date(selectedBill.due_date), 'EEEE, MMMM d, yyyy')}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-gray-600 font-medium">Status</span>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    selectedBill.is_paid 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {selectedBill.is_paid ? 'Paid' : 'Pending'}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center py-2">
+                  <span className="text-gray-600 font-medium">Days Until Due</span>
+                  <span className="text-gray-900 font-medium">
+                    {Math.ceil((new Date(selectedBill.due_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  // Handle pay now action
+                  setShowBillModal(false);
+                }}
+                className="flex-1 bg-primary-600 text-white px-4 py-3 rounded-lg hover:bg-primary-700 transition-colors duration-200 flex items-center justify-center gap-2 font-medium"
+              >
+                <CreditCard className="w-4 h-4" />
+                Pay Now
+              </button>
+              <button
+                onClick={() => setShowBillModal(false)}
+                className="px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

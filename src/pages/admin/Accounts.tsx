@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { AlertTriangle, Check, ChevronDown, DollarSign, Edit, Lock, Lock as LockOpen, Plus, Search, Trash2 } from 'lucide-react';
+import { accountService } from '../../lib/databaseService';
+import { AlertTriangle, Check, ChevronDown, DollarSign, Edit, Lock, Lock as LockOpen, Plus, Search, Trash2, Bell, Users, X } from 'lucide-react';
 import Loading from '../../components/ui/Loading';
 import toast from 'react-hot-toast';
 
@@ -36,6 +37,19 @@ const AdminAccounts = () => {
   const [formData, setFormData] = useState<Partial<Account>>({});
   const [selectedUserId, setSelectedUserId] = useState<string>('');
   const [isCreating, setIsCreating] = useState(false);
+  
+  // Notification management state
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
+  const [notificationData, setNotificationData] = useState({
+    title: '',
+    message: '',
+    type: 'info' as 'info' | 'warning' | 'success' | 'error'
+  });
+  
+  // Bulk operations state
+  const [selectedAccounts, setSelectedAccounts] = useState<number[]>([]);
+  const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
+  const [bulkAction, setBulkAction] = useState<'freeze' | 'unfreeze' | 'notify' | 'delete'>('freeze');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -110,33 +124,53 @@ const AdminAccounts = () => {
     try {
       const newStatus = !account.is_frozen;
       
-      const { error } = await supabase
-        .from('accounts')
-        .update({ is_frozen: newStatus })
-        .eq('id', account.id);
-
-      if (error) throw error;
+      if (newStatus) {
+        // Freezing account - use admin freeze method
+        await accountService.freezeByAdmin(account.id);
+      } else {
+        // Unfreezing account - use admin unfreeze method
+        await accountService.unfreezeByAdmin(account.id);
+      }
       
       // Update local state
       setAccounts(
         accounts.map((a) =>
-          a.id === account.id ? { ...a, is_frozen: newStatus } : a
+          a.id === account.id ? { 
+            ...a, 
+            is_frozen: newStatus
+          } : a
         )
       );
       
       // Add notification for the user
       await supabase.from('notifications').insert({
         user_id: account.user_id,
-        title: newStatus ? 'Account Frozen' : 'Account Unfrozen',
+        title: newStatus ? 'Account Frozen by Admin' : 'Account Unfrozen by Admin',
         message: newStatus
-          ? `Your ${account.account_type} account ending in ${account.account_number.slice(-4)} has been frozen. Please contact customer support for assistance.`
-          : `Your ${account.account_type} account ending in ${account.account_number.slice(-4)} has been unfrozen and is now active.`,
+          ? `Your ${account.account_type} account ending in ${account.account_number.slice(-4)} has been frozen by an administrator. Please contact customer support for assistance.`
+          : `Your ${account.account_type} account ending in ${account.account_number.slice(-4)} has been unfrozen by an administrator and is now active.`
       });
       
-      toast.success(newStatus ? 'Account frozen successfully' : 'Account unfrozen successfully');
+      toast.success(newStatus ? 'Account frozen by admin successfully' : 'Account unfrozen by admin successfully');
     } catch (error) {
       console.error('Error toggling account status:', error);
-      toast.error('Failed to update account status');
+      // Log more detailed error information
+      if (error instanceof Error) {
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+      } else if (typeof error === 'object' && error !== null) {
+        console.error('Error details:', JSON.stringify(error, null, 2));
+      }
+      
+      // Provide more specific error message to user
+      let errorMessage = 'Failed to update account status';
+      if (error instanceof Error) {
+        errorMessage = `Failed to update account status: ${error.message}`;
+      } else if (typeof error === 'object' && error !== null && 'message' in error) {
+        errorMessage = `Failed to update account status: ${(error as any).message}`;
+      }
+      
+      toast.error(errorMessage);
     }
   };
 
@@ -174,7 +208,11 @@ const AdminAccounts = () => {
     
     if (type === 'checkbox') {
       const { checked } = e.target as HTMLInputElement;
-      setFormData({ ...formData, [name]: checked });
+      if (name === 'is_frozen' && !checked) {
+        setFormData({ ...formData, [name]: checked });
+      } else {
+        setFormData({ ...formData, [name]: checked });
+      }
     } else if (name === 'balance') {
       setFormData({ ...formData, [name]: parseFloat(value) });
     } else {
@@ -184,6 +222,27 @@ const AdminAccounts = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate form data
+    if (isCreating && !selectedUserId) {
+      toast.error('Please select a customer');
+      return;
+    }
+    
+    if (!formData.account_type) {
+      toast.error('Please select an account type');
+      return;
+    }
+    
+    if (formData.balance === undefined || formData.balance === null) {
+      toast.error('Please enter a valid balance');
+      return;
+    }
+    
+    if (formData.balance < 0) {
+      toast.error('Balance cannot be negative');
+      return;
+    }
     
     try {
       if (isCreating) {
@@ -209,7 +268,7 @@ const AdminAccounts = () => {
         await supabase.from('notifications').insert({
           user_id: selectedUserId,
           title: 'New Account Created',
-          message: `A new ${formData.account_type} account has been created for you with an initial balance of $${formData.balance}.`,
+          message: `A new ${formData.account_type} account has been created for you with an initial balance of $${formData.balance}.`
         });
         
         // Update local state
@@ -252,7 +311,7 @@ const AdminAccounts = () => {
           await supabase.from('notifications').insert({
             user_id: selectedAccount.user_id,
             title: 'Balance Adjustment',
-            message: `Your ${selectedAccount.account_type} account ending in ${selectedAccount.account_number.slice(-4)} had a ${balanceDiff > 0 ? 'deposit' : 'withdrawal'} of $${Math.abs(balanceDiff).toFixed(2)} by an administrator.`,
+            message: `Your ${selectedAccount.account_type} account ending in ${selectedAccount.account_number.slice(-4)} had a ${balanceDiff > 0 ? 'deposit' : 'withdrawal'} of $${Math.abs(balanceDiff).toFixed(2)} by an administrator.`
           });
         }
         
@@ -262,7 +321,23 @@ const AdminAccounts = () => {
       closeModal();
     } catch (error) {
       console.error('Error saving account:', error);
-      toast.error('Failed to save account');
+      // Log more detailed error information
+      if (error instanceof Error) {
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+      } else if (typeof error === 'object' && error !== null) {
+        console.error('Error details:', JSON.stringify(error, null, 2));
+      }
+      
+      // Provide more specific error message to user
+      let errorMessage = 'Failed to save account';
+      if (error instanceof Error) {
+        errorMessage = `Failed to save account: ${error.message}`;
+      } else if (typeof error === 'object' && error !== null && 'message' in error) {
+        errorMessage = `Failed to save account: ${(error as any).message}`;
+      }
+      
+      toast.error(errorMessage);
     }
   };
 
@@ -284,14 +359,222 @@ const AdminAccounts = () => {
       await supabase.from('notifications').insert({
         user_id: selectedAccount.user_id,
         title: 'Account Closed',
-        message: `Your ${selectedAccount.account_type} account ending in ${selectedAccount.account_number.slice(-4)} has been closed.`,
+        message: `Your ${selectedAccount.account_type} account ending in ${selectedAccount.account_number.slice(-4)} has been closed.`
       });
       
       toast.success('Account deleted successfully');
       closeModal();
     } catch (error) {
       console.error('Error deleting account:', error);
-      toast.error('Failed to delete account');
+      // Log more detailed error information
+      if (error instanceof Error) {
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+      } else if (typeof error === 'object' && error !== null) {
+        console.error('Error details:', JSON.stringify(error, null, 2));
+      }
+      
+      // Provide more specific error message to user
+      let errorMessage = 'Failed to delete account';
+      if (error instanceof Error) {
+        errorMessage = `Failed to delete account: ${error.message}`;
+      } else if (typeof error === 'object' && error !== null && 'message' in error) {
+        errorMessage = `Failed to delete account: ${(error as any).message}`;
+      }
+      
+      toast.error(errorMessage);
+    }
+  };
+
+  // Notification management functions
+  const openNotificationModal = (account: Account) => {
+    setSelectedAccount(account);
+    setNotificationData({
+      title: '',
+      message: '',
+      type: 'info'
+    });
+    setIsNotificationModalOpen(true);
+  };
+
+  const closeNotificationModal = () => {
+    setIsNotificationModalOpen(false);
+    setSelectedAccount(null);
+    setNotificationData({
+      title: '',
+      message: '',
+      type: 'info'
+    });
+  };
+
+  const handleSendNotification = async () => {
+    if (!selectedAccount || !notificationData.title || !notificationData.message) {
+      toast.error('Please fill in all notification fields');
+      return;
+    }
+
+    try {
+      await supabase.from('notifications').insert({
+        user_id: selectedAccount.user_id,
+        title: notificationData.title,
+        message: notificationData.message,
+        type: notificationData.type
+      });
+
+      toast.success('Notification sent successfully');
+      closeNotificationModal();
+    } catch (error) {
+      console.error('Error sending notification:', error);
+      // Log more detailed error information
+      if (error instanceof Error) {
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+      } else if (typeof error === 'object' && error !== null) {
+        console.error('Error details:', JSON.stringify(error, null, 2));
+      }
+      
+      // Provide more specific error message to user
+      let errorMessage = 'Failed to send notification';
+      if (error instanceof Error) {
+        errorMessage = `Failed to send notification: ${error.message}`;
+      } else if (typeof error === 'object' && error !== null && 'message' in error) {
+        errorMessage = `Failed to send notification: ${(error as any).message}`;
+      }
+      
+      toast.error(errorMessage);
+    }
+  };
+
+  // Bulk operations functions
+  const handleAccountSelection = (accountId: number, checked: boolean) => {
+    if (checked) {
+      setSelectedAccounts([...selectedAccounts, accountId]);
+    } else {
+      setSelectedAccounts(selectedAccounts.filter(id => id !== accountId));
+    }
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedAccounts(filteredAccounts.map(account => account.id));
+    } else {
+      setSelectedAccounts([]);
+    }
+  };
+
+  const openBulkModal = (action: 'freeze' | 'unfreeze' | 'notify' | 'delete') => {
+    if (selectedAccounts.length === 0) {
+      toast.error('Please select at least one account');
+      return;
+    }
+    setBulkAction(action);
+    setIsBulkModalOpen(true);
+  };
+
+  const closeBulkModal = () => {
+    setIsBulkModalOpen(false);
+    setSelectedAccounts([]);
+  };
+
+  const handleBulkAction = async () => {
+    try {
+      const selectedAccountsData = accounts.filter(account => 
+        selectedAccounts.includes(account.id)
+      );
+
+      switch (bulkAction) {
+        case 'freeze':
+          for (const account of selectedAccountsData) {
+            await accountService.freezeByAdmin(account.id);
+            // Add notification
+            await supabase.from('notifications').insert({
+              user_id: account.user_id,
+              title: 'Account Frozen by Admin',
+              message: `Your ${account.account_type} account ending in ${account.account_number.slice(-4)} has been frozen by an administrator. Please contact customer support for assistance.`
+            });
+          }
+          // Update local state
+          setAccounts(accounts.map(account => 
+            selectedAccounts.includes(account.id) 
+              ? { ...account, is_frozen: true }
+              : account
+          ));
+          toast.success(`${selectedAccounts.length} accounts frozen successfully`);
+          break;
+
+        case 'unfreeze':
+          for (const account of selectedAccountsData) {
+            await accountService.unfreezeByAdmin(account.id);
+            // Add notification
+            await supabase.from('notifications').insert({
+              user_id: account.user_id,
+              title: 'Account Unfrozen by Admin',
+              message: `Your ${account.account_type} account ending in ${account.account_number.slice(-4)} has been unfrozen by an administrator and is now active.`
+            });
+          }
+          // Update local state
+          setAccounts(accounts.map(account => 
+            selectedAccounts.includes(account.id) 
+              ? { ...account, is_frozen: false }
+              : account
+          ));
+          toast.success(`${selectedAccounts.length} accounts unfrozen successfully`);
+          break;
+
+        case 'delete':
+          for (const account of selectedAccountsData) {
+            await supabase.from('accounts').delete().eq('id', account.id);
+            // Add notification
+            await supabase.from('notifications').insert({
+              user_id: account.user_id,
+              title: 'Account Closed',
+              message: `Your ${account.account_type} account ending in ${account.account_number.slice(-4)} has been closed.`
+            });
+          }
+          // Update local state
+          setAccounts(accounts.filter(account => 
+            !selectedAccounts.includes(account.id)
+          ));
+          toast.success(`${selectedAccounts.length} accounts deleted successfully`);
+          break;
+
+        case 'notify':
+          if (!notificationData.title || !notificationData.message) {
+            toast.error('Please fill in notification details');
+            return;
+          }
+          for (const account of selectedAccountsData) {
+            await supabase.from('notifications').insert({
+              user_id: account.user_id,
+              title: notificationData.title,
+              message: notificationData.message,
+              type: notificationData.type
+            });
+          }
+          toast.success(`Notification sent to ${selectedAccounts.length} accounts`);
+          break;
+      }
+
+      closeBulkModal();
+    } catch (error) {
+      console.error('Error performing bulk action:', error);
+      // Log more detailed error information
+      if (error instanceof Error) {
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+      } else if (typeof error === 'object' && error !== null) {
+        console.error('Error details:', JSON.stringify(error, null, 2));
+      }
+      
+      // Provide more specific error message to user
+      let errorMessage = 'Failed to perform bulk action';
+      if (error instanceof Error) {
+        errorMessage = `Failed to perform bulk action: ${error.message}`;
+      } else if (typeof error === 'object' && error !== null && 'message' in error) {
+        errorMessage = `Failed to perform bulk action: ${(error as any).message}`;
+      }
+      
+      toast.error(errorMessage);
     }
   };
 
@@ -306,14 +589,67 @@ const AdminAccounts = () => {
           <h1 className="text-2xl font-bold text-gray-900">Accounts</h1>
           <p className="text-gray-600 mt-1">Manage customer accounts</p>
         </div>
-        <button
-          onClick={openCreateModal}
-          className="btn btn-primary flex items-center"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          New Account
-        </button>
+        <div className="flex space-x-3">
+          <button
+            onClick={openCreateModal}
+            className="btn btn-primary flex items-center"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            New Account
+          </button>
+        </div>
       </div>
+
+      {/* Bulk Operations Toolbar */}
+      {selectedAccounts.length > 0 && (
+        <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <Users className="w-5 h-5 text-blue-600 mr-2" />
+              <span className="text-sm font-medium text-blue-800">
+                {selectedAccounts.length} account{selectedAccounts.length > 1 ? 's' : ''} selected
+              </span>
+            </div>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => openBulkModal('freeze')}
+                className="btn btn-sm bg-red-50 text-red-700 hover:bg-red-100 border border-red-200"
+              >
+                <Lock className="w-4 h-4 mr-1" />
+                Freeze
+              </button>
+              <button
+                onClick={() => openBulkModal('unfreeze')}
+                className="btn btn-sm bg-green-50 text-green-700 hover:bg-green-100 border border-green-200"
+              >
+                <LockOpen className="w-4 h-4 mr-1" />
+                Unfreeze
+              </button>
+              <button
+                onClick={() => openBulkModal('notify')}
+                className="btn btn-sm bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200"
+              >
+                <Bell className="w-4 h-4 mr-1" />
+                Notify
+              </button>
+              <button
+                onClick={() => openBulkModal('delete')}
+                className="btn btn-sm bg-red-50 text-red-700 hover:bg-red-100 border border-red-200"
+              >
+                <Trash2 className="w-4 h-4 mr-1" />
+                Delete
+              </button>
+              <button
+                onClick={() => setSelectedAccounts([])}
+                className="btn btn-sm btn-outline"
+              >
+                <X className="w-4 h-4 mr-1" />
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Search and Filters */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -376,6 +712,14 @@ const AdminAccounts = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <input
+                    type="checkbox"
+                    checked={selectedAccounts.length === filteredAccounts.length && filteredAccounts.length > 0}
+                    onChange={(e) => handleSelectAll(e.target.checked)}
+                    className="h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                  />
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Customer
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -401,13 +745,21 @@ const AdminAccounts = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredAccounts.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
+                  <td colSpan={8} className="px-6 py-4 text-center text-gray-500">
                     No accounts found
                   </td>
                 </tr>
               ) : (
                 filteredAccounts.map((account) => (
                   <tr key={account.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <input
+                        type="checkbox"
+                        checked={selectedAccounts.includes(account.id)}
+                        onChange={(e) => handleAccountSelection(account.id, e.target.checked)}
+                        className="h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                      />
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">
                         {getUserName(account.user_id)}
@@ -440,24 +792,36 @@ const AdminAccounts = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => handleFreezeToggle(account)}
-                        className={`mr-3 ${
-                          account.is_frozen ? 'text-success-600 hover:text-success-900' : 'text-error-600 hover:text-error-900'
-                        }`}
-                      >
-                        {account.is_frozen ? <LockOpen className="h-5 w-5" /> : <Lock className="h-5 w-5" />}
-                        <span className="sr-only">
-                          {account.is_frozen ? 'Unfreeze' : 'Freeze'}
-                        </span>
-                      </button>
-                      <button
-                        onClick={() => openEditModal(account)}
-                        className="text-primary-600 hover:text-primary-900 mr-3"
-                      >
-                        <Edit className="h-5 w-5" />
-                        <span className="sr-only">Edit</span>
-                      </button>
+                      <div className="flex items-center justify-end space-x-2">
+                        <button
+                          onClick={() => openNotificationModal(account)}
+                          className="text-blue-600 hover:text-blue-900"
+                          title="Send Notification"
+                        >
+                          <Bell className="h-4 w-4" />
+                          <span className="sr-only">Send Notification</span>
+                        </button>
+                        <button
+                          onClick={() => handleFreezeToggle(account)}
+                          className={`${
+                            account.is_frozen ? 'text-success-600 hover:text-success-900' : 'text-error-600 hover:text-error-900'
+                          }`}
+                          title={account.is_frozen ? 'Unfreeze' : 'Freeze'}
+                        >
+                          {account.is_frozen ? <LockOpen className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+                          <span className="sr-only">
+                            {account.is_frozen ? 'Unfreeze' : 'Freeze'}
+                          </span>
+                        </button>
+                        <button
+                          onClick={() => openEditModal(account)}
+                          className="text-primary-600 hover:text-primary-900"
+                          title="Edit Account"
+                        >
+                          <Edit className="h-4 w-4" />
+                          <span className="sr-only">Edit</span>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -575,18 +939,21 @@ const AdminAccounts = () => {
                 />
               </div>
 
-              <div className="flex items-center">
-                <input
-                  id="is_frozen"
-                  name="is_frozen"
-                  type="checkbox"
-                  checked={formData.is_frozen || false}
-                  onChange={(e) => setFormData({ ...formData, is_frozen: e.target.checked })}
-                  className="h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
-                />
-                <label htmlFor="is_frozen" className="ml-2 block text-sm text-gray-900">
-                  Freeze Account
-                </label>
+              <div className="space-y-3">
+                <div className="flex items-center">
+                  <input
+                    id="is_frozen"
+                    name="is_frozen"
+                    type="checkbox"
+                    checked={formData.is_frozen || false}
+                    onChange={(e) => setFormData({ ...formData, is_frozen: e.target.checked })}
+                    className="h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                  />
+                  <label htmlFor="is_frozen" className="ml-2 block text-sm text-gray-900">
+                    Freeze Account
+                  </label>
+                </div>
+                
               </div>
 
               {!isCreating && (
@@ -629,6 +996,210 @@ const AdminAccounts = () => {
                 </div>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Notification Modal */}
+      {isNotificationModalOpen && selectedAccount && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-gray-900">Send Notification</h2>
+              <button
+                onClick={closeNotificationModal}
+                className="text-gray-400 hover:text-gray-500"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+              <p className="text-sm text-gray-600">
+                <strong>To:</strong> {getUserName(selectedAccount.user_id)} ({getUserEmail(selectedAccount.user_id)})
+              </p>
+              <p className="text-sm text-gray-600">
+                <strong>Account:</strong> {selectedAccount.account_type} ending in {selectedAccount.account_number.slice(-4)}
+              </p>
+            </div>
+
+            <form onSubmit={(e) => { e.preventDefault(); handleSendNotification(); }} className="space-y-4">
+              <div>
+                <label htmlFor="notification_title" className="form-label">
+                  Title
+                </label>
+                <input
+                  id="notification_title"
+                  type="text"
+                  value={notificationData.title}
+                  onChange={(e) => setNotificationData({ ...notificationData, title: e.target.value })}
+                  className="form-input"
+                  required
+                  placeholder="Notification title"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="notification_type" className="form-label">
+                  Type
+                </label>
+                <select
+                  id="notification_type"
+                  value={notificationData.type}
+                  onChange={(e) => setNotificationData({ ...notificationData, type: e.target.value as any })}
+                  className="form-input"
+                >
+                  <option value="info">Information</option>
+                  <option value="warning">Warning</option>
+                  <option value="success">Success</option>
+                  <option value="error">Error</option>
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="notification_message" className="form-label">
+                  Message
+                </label>
+                <textarea
+                  id="notification_message"
+                  value={notificationData.message}
+                  onChange={(e) => setNotificationData({ ...notificationData, message: e.target.value })}
+                  className="form-input"
+                  rows={4}
+                  required
+                  placeholder="Notification message"
+                />
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={closeNotificationModal}
+                  className="btn btn-outline"
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary flex items-center">
+                  <Bell className="w-4 h-4 mr-2" />
+                  Send Notification
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Operations Modal */}
+      {isBulkModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-gray-900">
+                {bulkAction === 'freeze' && 'Freeze Accounts'}
+                {bulkAction === 'unfreeze' && 'Unfreeze Accounts'}
+                {bulkAction === 'delete' && 'Delete Accounts'}
+                {bulkAction === 'notify' && 'Send Notifications'}
+              </h2>
+              <button
+                onClick={closeBulkModal}
+                className="text-gray-400 hover:text-gray-500"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="flex">
+                <AlertTriangle className="h-5 w-5 text-yellow-500 mr-2" />
+                <div>
+                  <h3 className="text-sm font-medium text-yellow-800">Confirm Action</h3>
+                  <div className="mt-1 text-sm text-yellow-700">
+                    {bulkAction === 'freeze' && `This will freeze ${selectedAccounts.length} account(s). Users will not be able to unfreeze these accounts.`}
+                    {bulkAction === 'unfreeze' && `This will unfreeze ${selectedAccounts.length} account(s).`}
+                    {bulkAction === 'delete' && `This will permanently delete ${selectedAccounts.length} account(s). This action cannot be undone.`}
+                    {bulkAction === 'notify' && `This will send a notification to ${selectedAccounts.length} account holder(s).`}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {bulkAction === 'notify' && (
+              <div className="space-y-4 mb-4">
+                <div>
+                  <label htmlFor="bulk_notification_title" className="form-label">
+                    Title
+                  </label>
+                  <input
+                    id="bulk_notification_title"
+                    type="text"
+                    value={notificationData.title}
+                    onChange={(e) => setNotificationData({ ...notificationData, title: e.target.value })}
+                    className="form-input"
+                    required
+                    placeholder="Notification title"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="bulk_notification_type" className="form-label">
+                    Type
+                  </label>
+                  <select
+                    id="bulk_notification_type"
+                    value={notificationData.type}
+                    onChange={(e) => setNotificationData({ ...notificationData, type: e.target.value as any })}
+                    className="form-input"
+                  >
+                    <option value="info">Information</option>
+                    <option value="warning">Warning</option>
+                    <option value="success">Success</option>
+                    <option value="error">Error</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="bulk_notification_message" className="form-label">
+                    Message
+                  </label>
+                  <textarea
+                    id="bulk_notification_message"
+                    value={notificationData.message}
+                    onChange={(e) => setNotificationData({ ...notificationData, message: e.target.value })}
+                    className="form-input"
+                    rows={4}
+                    required
+                    placeholder="Notification message"
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+              <button
+                type="button"
+                onClick={closeBulkModal}
+                className="btn btn-outline"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleBulkAction}
+                className={`btn flex items-center ${
+                  bulkAction === 'delete' 
+                    ? 'bg-red-600 hover:bg-red-700 text-white' 
+                    : 'btn-primary'
+                }`}
+              >
+                {bulkAction === 'freeze' && <Lock className="w-4 h-4 mr-2" />}
+                {bulkAction === 'unfreeze' && <LockOpen className="w-4 h-4 mr-2" />}
+                {bulkAction === 'delete' && <Trash2 className="w-4 h-4 mr-2" />}
+                {bulkAction === 'notify' && <Bell className="w-4 h-4 mr-2" />}
+                {bulkAction === 'freeze' && 'Freeze Accounts'}
+                {bulkAction === 'unfreeze' && 'Unfreeze Accounts'}
+                {bulkAction === 'delete' && 'Delete Accounts'}
+                {bulkAction === 'notify' && 'Send Notifications'}
+              </button>
+            </div>
           </div>
         </div>
       )}

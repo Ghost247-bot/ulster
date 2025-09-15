@@ -13,10 +13,12 @@ import UserCards from './pages/user/Cards';
 import UserTransactions from './pages/user/Transactions';
 import UserProfile from './pages/user/Profile';
 import UserNotifications from './pages/user/Notifications';
+import UserFinancialGoals from './pages/user/FinancialGoals';
 import AdminUsers from './pages/admin/Users';
 import AdminAccounts from './pages/admin/Accounts';
 import AdminTransactions from './pages/admin/Transactions';
 import AdminCards from './pages/admin/Cards';
+import AdminFinancialGoals from './pages/admin/FinancialGoals';
 import UserLayout from './components/layouts/UserLayout';
 import AdminLayout from './components/layouts/AdminLayout';
 import AuthLayout from './components/layouts/AuthLayout';
@@ -68,6 +70,10 @@ import InvestmentsPage from './pages/user/InvestmentsPage';
 import AdminLogin from './pages/admin/Login';
 import AdminNotifications from './pages/admin/Notifications';
 import AdminBanner from './pages/admin/Banner';
+import StatisticsCards from './pages/admin/StatisticsCards';
+import UpcomingBills from './pages/admin/UpcomingBills';
+import TableEditorPage from './pages/admin/TableEditor';
+import CreateUser from './pages/CreateUser';
 // Placeholder imports for not-yet-created pages
 const CommercialRealEstate = () => <div>Commercial Real Estate Page Coming Soon</div>;
 const SBALoans = () => <div>SBA Loans Page Coming Soon</div>;
@@ -127,6 +133,7 @@ function App() {
                 mothers_maiden_name: '',
                 referral_source: '',
                 is_admin: false,
+                role: 'user',
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString()
               })
@@ -240,6 +247,7 @@ function App() {
         <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" />} />
         <Route path="/register" element={!user ? <Register /> : <Navigate to="/dashboard" />} />
         <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/create-user" element={<CreateUser />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/financial-calculators" element={<FinancialCalculators />} />
         <Route path="/about" element={<div>About Page</div>} />
@@ -302,6 +310,7 @@ function App() {
           <Route path="/transactions" element={<UserTransactions />} />
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/notifications" element={<UserNotifications />} />
+          <Route path="/goals" element={<UserFinancialGoals />} />
         </Route>
       </Route>
 
@@ -314,6 +323,9 @@ function App() {
           <Route path="/admin/cards" element={<AdminCards />} />
           <Route path="/admin/transactions" element={<AdminTransactions />} />
           <Route path="/admin/notifications" element={<AdminNotifications />} />
+          <Route path="/admin/statistics-cards" element={<StatisticsCards />} />
+          <Route path="/admin/upcoming-bills" element={<UpcomingBills />} />
+          <Route path="/admin/financial-goals" element={<AdminFinancialGoals />} />
           <Route path="/admin/banner" element={<AdminBanner />} />
         </Route>
       </Route>
