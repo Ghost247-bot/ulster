@@ -1240,10 +1240,9 @@ const UserDashboard = () => {
       )}
 
       {/* Bill Details Modal */}
-      {console.log('Modal state:', { showBillModal, selectedBill })}
       {showBillModal && selectedBill && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4">
-          <div className="bg-red-500 rounded-xl shadow-2xl p-6 w-full max-w-md relative">
+          <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
             <button
               className="absolute top-4 right-4 text-gray-500 hover:text-black text-2xl font-bold transition-colors duration-200"
               onClick={() => setShowBillModal(false)}
@@ -1253,68 +1252,162 @@ const UserDashboard = () => {
             </button>
 
             <div className="mb-6">
-              <div className="flex items-center gap-3 mb-4">
+              {/* Header */}
+              <div className="flex items-center gap-3 mb-6">
                 <div className="p-3 rounded-full bg-yellow-100 text-yellow-600">
                   <Clock className="w-6 h-6" />
                 </div>
-                <div>
+                <div className="flex-1">
                   <h2 className="text-xl font-bold text-gray-900 capitalize">{selectedBill.name}</h2>
                   <p className="text-sm text-gray-500 capitalize">{selectedBill.category}</p>
                 </div>
+                <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                  selectedBill.is_paid 
+                    ? 'bg-green-100 text-green-800' 
+                    : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {selectedBill.is_paid ? 'Paid' : 'Pending'}
+                </div>
               </div>
 
-              <div className="space-y-4">
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-gray-600 font-medium">Amount Due</span>
-                  <span className="text-xl font-bold text-gray-900">
-                    ${selectedBill.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </span>
+              {/* Bill Details */}
+              <div className="space-y-4 mb-6">
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Bill Information</h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600 font-medium">Amount Due</span>
+                      <span className="text-xl font-bold text-gray-900">
+                        ${selectedBill.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600 font-medium">Due Date</span>
+                      <span className="text-gray-900 font-medium">
+                        {format(new Date(selectedBill.due_date), 'EEEE, MMMM d, yyyy')}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600 font-medium">Days Until Due</span>
+                      <span className={`font-medium ${
+                        Math.ceil((new Date(selectedBill.due_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) <= 3
+                          ? 'text-red-600'
+                          : Math.ceil((new Date(selectedBill.due_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) <= 7
+                          ? 'text-yellow-600'
+                          : 'text-gray-900'
+                      }`}>
+                        {Math.ceil((new Date(selectedBill.due_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600 font-medium">Bill ID</span>
+                      <span className="text-gray-900 font-mono text-sm">{selectedBill.id}</span>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-gray-600 font-medium">Due Date</span>
-                  <span className="text-gray-900 font-medium">
-                    {format(new Date(selectedBill.due_date), 'EEEE, MMMM d, yyyy')}
-                  </span>
+                {/* Payment Options */}
+                <div className="bg-blue-50 rounded-lg p-4">
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Payment Options</h3>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span>Pay from checking account</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <span>Pay with debit card</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                      <span>Set up automatic payments</span>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-gray-600 font-medium">Status</span>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    selectedBill.is_paid 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {selectedBill.is_paid ? 'Paid' : 'Pending'}
-                  </span>
-                </div>
-
-                <div className="flex justify-between items-center py-2">
-                  <span className="text-gray-600 font-medium">Days Until Due</span>
-                  <span className="text-gray-900 font-medium">
-                    {Math.ceil((new Date(selectedBill.due_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days
-                  </span>
+                {/* Quick Actions */}
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Quick Actions</h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button className="p-2 text-xs bg-white rounded border hover:bg-gray-50 transition-colors">
+                      📅 Set Reminder
+                    </button>
+                    <button className="p-2 text-xs bg-white rounded border hover:bg-gray-50 transition-colors">
+                      📧 Email Bill
+                    </button>
+                    <button className="p-2 text-xs bg-white rounded border hover:bg-gray-50 transition-colors">
+                      📱 Add to Calendar
+                    </button>
+                    <button className="p-2 text-xs bg-white rounded border hover:bg-gray-50 transition-colors">
+                      💳 Auto Pay
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  // Handle pay now action
-                  setShowBillModal(false);
-                }}
-                className="flex-1 bg-primary-600 text-white px-4 py-3 rounded-lg hover:bg-primary-700 transition-colors duration-200 flex items-center justify-center gap-2 font-medium"
-              >
-                <CreditCard className="w-4 h-4" />
-                Pay Now
-              </button>
-              <button
-                onClick={() => setShowBillModal(false)}
-                className="px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium"
-              >
-                Close
-              </button>
+            <div className="flex flex-col gap-3">
+              {/* Primary Actions */}
+              <div className="flex gap-3">
+                {!selectedBill.is_paid && (
+                  <button
+                    onClick={() => {
+                      // Handle pay now action
+                      console.log('Pay now clicked for bill:', selectedBill.id);
+                      // TODO: Implement payment processing
+                      setShowBillModal(false);
+                    }}
+                    className="flex-1 bg-primary-600 text-white px-4 py-3 rounded-lg hover:bg-primary-700 transition-colors duration-200 flex items-center justify-center gap-2 font-medium"
+                  >
+                    <CreditCard className="w-4 h-4" />
+                    Pay Now
+                  </button>
+                )}
+                <button
+                  onClick={() => {
+                    // Handle schedule payment
+                    console.log('Schedule payment for bill:', selectedBill.id);
+                    // TODO: Implement payment scheduling
+                  }}
+                  className="flex-1 bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center gap-2 font-medium"
+                >
+                  <Clock className="w-4 h-4" />
+                  Schedule
+                </button>
+              </div>
+
+              {/* Secondary Actions */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    // Handle set reminder
+                    console.log('Set reminder for bill:', selectedBill.id);
+                    // TODO: Implement reminder setting
+                  }}
+                  className="flex-1 bg-gray-100 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-200 transition-colors duration-200 text-sm font-medium"
+                >
+                  Set Reminder
+                </button>
+                <button
+                  onClick={() => {
+                    // Handle view history
+                    console.log('View payment history for bill:', selectedBill.id);
+                    // TODO: Implement payment history view
+                  }}
+                  className="flex-1 bg-gray-100 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-200 transition-colors duration-200 text-sm font-medium"
+                >
+                  View History
+                </button>
+                <button
+                  onClick={() => setShowBillModal(false)}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>
