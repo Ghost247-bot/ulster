@@ -535,7 +535,7 @@ const UserDashboard = () => {
           <span className="text-xs sm:text-sm font-medium capitalize group-hover:text-yellow-700 transition-colors duration-300 text-center">Savings</span>
         </Link>
         <Link 
-          to="/investments" 
+          to="/Investment" 
           className="group p-3 sm:p-4 bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center gap-2 transform hover:scale-105 hover:-translate-y-1 animate-slide-in-up"
           style={{ animationDelay: '0.4s' }}
         >

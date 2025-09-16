@@ -306,7 +306,7 @@ function App() {
           <Route path="/cards" element={<CardsPage />} />
           <Route path="/payments" element={<PaymentsPage />} />
           <Route path="/savings" element={<SavingsPage />} />
-          <Route path="/investments" element={<InvestmentsPage />} />
+          <Route path="/Investment" element={<InvestmentsPage />} />
           <Route path="/transactions" element={<UserTransactions />} />
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/notifications" element={<UserNotifications />} />

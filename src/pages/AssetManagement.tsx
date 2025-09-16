@@ -13,7 +13,7 @@ const AssetManagement: React.FC = () => {
             ASSET MANAGEMENT
           </span>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6">Asset Management</h1>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">Professional asset management services to help you optimize and grow your investments.</p>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">Professional asset management services to help you optimize and grow your Investment.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -95,7 +95,7 @@ const AssetManagement: React.FC = () => {
                 </svg>
               </div>
               <h3 className="text-lg font-semibold mb-2">Risk Management</h3>
-              <p className="text-gray-600">Robust strategies to protect your investments.</p>
+              <p className="text-gray-600">Robust strategies to protect your Investment.</p>
             </div>
             <div className="flex flex-col items-center text-center p-4">
               <div className="w-16 h-16 rounded-full bg-[#C14F2B]/10 flex items-center justify-center mb-4">

@@ -39,13 +39,13 @@ const InvestmentsPage = () => {
       if (!user) return;
       setIsLoading(true);
       try {
-        // Fetch investments
-        const { data: investmentsData, error: investmentsError } = await supabase
-          .from('investments')
+        // Fetch Investment
+        const { data: InvestmentData, error: InvestmentError } = await supabase
+          .from('Investment')
           .select('*')
           .eq('user_id', user.id);
-        if (investmentsError) throw investmentsError;
-        setPortfolio(investmentsData || []);
+        if (InvestmentError) throw InvestmentError;
+        setPortfolio(InvestmentData || []);
 
         // Fetch investment transactions
         const { data: txData, error: txError } = await supabase
@@ -57,7 +57,7 @@ const InvestmentsPage = () => {
         if (txError) throw txError;
         setRecentActivity(txData || []);
       } catch (error) {
-        console.error('Error fetching investments data:', error);
+        console.error('Error fetching Investment data:', error);
       } finally {
         setIsLoading(false);
       }
@@ -103,7 +103,7 @@ const InvestmentsPage = () => {
           <h2 className="text-lg font-semibold mb-3">Portfolio Overview</h2>
           <div className="space-y-3">
             {portfolio.length === 0 ? (
-              <div className="text-gray-500">No investments found.</div>
+              <div className="text-gray-500">No Investment found.</div>
             ) : portfolio.map(asset => (
               <div key={asset.id} className="flex items-center justify-between bg-gray-100 rounded-lg p-4">
                 <div className="font-medium">{asset.name}</div>

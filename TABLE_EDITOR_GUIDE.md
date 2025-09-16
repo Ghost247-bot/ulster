@@ -41,7 +41,7 @@ The Table Editor supports all tables in your Supabase database:
 - **user_financial_goals** - User financial goals
 - **user_upcoming_bills** - Upcoming bill reminders
 - **user_statistics_cards** - Dashboard statistics
-- **investments** - Investment accounts
+- **Investment** - Investment accounts
 - **card_transactions** - Card transaction history
 
 ## Usage

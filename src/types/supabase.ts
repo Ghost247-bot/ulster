@@ -275,12 +275,12 @@ export type Database = {
             foreignKeyName: "investment_transactions_investment_id_fkey"
             columns: ["investment_id"]
             isOneToOne: false
-            referencedRelation: "investments"
+            referencedRelation: "Investment"
             referencedColumns: ["id"]
           },
         ]
       }
-      investments: {
+      Investment: {
         Row: {
           created_at: string
           id: number

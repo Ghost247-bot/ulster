@@ -95,7 +95,7 @@ const InvestmentServices = () => {
                 </svg>
               </div>
               <h3 className="text-lg font-semibold mb-2">Risk Management</h3>
-              <p className="text-gray-600">Strategic approaches to protect and grow your investments.</p>
+              <p className="text-gray-600">Strategic approaches to protect and grow your Investment.</p>
             </div>
             <div className="flex flex-col items-center text-center p-4">
               <div className="w-16 h-16 rounded-full bg-[#C14F2B]/10 flex items-center justify-center mb-4">
