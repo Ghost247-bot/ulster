@@ -468,34 +468,34 @@ const UserDashboard = () => {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6 px-4 sm:px-6 lg:px-8 max-w-[2000px] mx-auto">
+    <div className="space-y-3 sm:space-y-4 md:space-y-6">
       {/* Banners */}
       <div className="animate-fade-in">
         <BannerDisplay />
       </div>
 
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-slide-in-up">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 animate-slide-in-up">
         <div className="flex-1 min-w-0">
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 animate-fade-in truncate">
+          <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 animate-fade-in truncate">
             Welcome back, {profile?.first_name && profile?.last_name ? `${profile.first_name} ${profile.last_name}` : user?.email?.split('@')[0].charAt(0).toUpperCase() + user?.email?.split('@')[0].slice(1)}
           </h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-1 animate-fade-in-delay">Here's an overview of your finances</p>
+          <p className="text-xs sm:text-sm md:text-base text-gray-600 mt-1 animate-fade-in-delay">Here's an overview of your finances</p>
         </div>
         <div className="flex flex-col xs:flex-row gap-2 w-full sm:w-auto animate-slide-in-right">
           <Link
             to="/accounts"
-            className="btn btn-primary flex items-center justify-center text-sm sm:text-base transform hover:scale-105 transition-all duration-200 hover:shadow-lg w-full xs:w-auto"
+            className="btn btn-primary flex items-center justify-center text-xs sm:text-sm md:text-base transform hover:scale-105 transition-all duration-200 hover:shadow-lg w-full xs:w-auto px-3 sm:px-4 py-2"
           >
-            <PlusCircle className="w-4 h-4 mr-1" />
+            <PlusCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
             <span className="hidden xs:inline">New Account</span>
             <span className="xs:hidden">New</span>
           </Link>
           <Link
             to="/transactions"
-            className="btn btn-outline flex items-center justify-center text-sm sm:text-base transform hover:scale-105 transition-all duration-200 hover:shadow-md w-full xs:w-auto"
+            className="btn btn-outline flex items-center justify-center text-xs sm:text-sm md:text-base transform hover:scale-105 transition-all duration-200 hover:shadow-md w-full xs:w-auto px-3 sm:px-4 py-2"
           >
-            <FileText className="w-4 h-4 mr-1" />
+            <FileText className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
             <span className="hidden xs:inline">View All Transactions</span>
             <span className="xs:hidden">Transactions</span>
           </Link>
@@ -503,69 +503,69 @@ const UserDashboard = () => {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-5 gap-2 xs:gap-3 sm:gap-4">
         <Link 
           to="/cards" 
-          className="group p-3 sm:p-4 bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center gap-2 transform hover:scale-105 hover:-translate-y-1 animate-slide-in-up"
+          className="group p-2 xs:p-3 sm:p-4 bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center gap-1 xs:gap-2 transform hover:scale-105 hover:-translate-y-1 animate-slide-in-up"
           style={{ animationDelay: '0.1s' }}
         >
-          <div className="p-2 rounded-full bg-primary-100 group-hover:bg-primary-200 transition-colors duration-300">
-            <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600 group-hover:scale-110 transition-transform duration-300" />
+          <div className="p-1.5 xs:p-2 rounded-full bg-primary-100 group-hover:bg-primary-200 transition-colors duration-300">
+            <CreditCard className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 text-primary-600 group-hover:scale-110 transition-transform duration-300" />
           </div>
-          <span className="text-xs sm:text-sm font-medium capitalize group-hover:text-primary-700 transition-colors duration-300 text-center">Cards</span>
+          <span className="text-[10px] xs:text-xs sm:text-sm font-medium capitalize group-hover:text-primary-700 transition-colors duration-300 text-center leading-tight">Cards</span>
         </Link>
         <Link 
           to="/payments" 
-          className="group p-3 sm:p-4 bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center gap-2 transform hover:scale-105 hover:-translate-y-1 animate-slide-in-up"
+          className="group p-2 xs:p-3 sm:p-4 bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center gap-1 xs:gap-2 transform hover:scale-105 hover:-translate-y-1 animate-slide-in-up"
           style={{ animationDelay: '0.2s' }}
         >
-          <div className="p-2 rounded-full bg-green-100 group-hover:bg-green-200 transition-colors duration-300">
-            <Wallet className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 group-hover:scale-110 transition-transform duration-300" />
+          <div className="p-1.5 xs:p-2 rounded-full bg-green-100 group-hover:bg-green-200 transition-colors duration-300">
+            <Wallet className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 text-green-600 group-hover:scale-110 transition-transform duration-300" />
           </div>
-          <span className="text-xs sm:text-sm font-medium capitalize group-hover:text-green-700 transition-colors duration-300 text-center">Payments</span>
+          <span className="text-[10px] xs:text-xs sm:text-sm font-medium capitalize group-hover:text-green-700 transition-colors duration-300 text-center leading-tight">Payments</span>
         </Link>
         <Link 
           to="/savings" 
-          className="group p-3 sm:p-4 bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center gap-2 transform hover:scale-105 hover:-translate-y-1 animate-slide-in-up"
+          className="group p-2 xs:p-3 sm:p-4 bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center gap-1 xs:gap-2 transform hover:scale-105 hover:-translate-y-1 animate-slide-in-up"
           style={{ animationDelay: '0.3s' }}
         >
-          <div className="p-2 rounded-full bg-yellow-100 group-hover:bg-yellow-200 transition-colors duration-300">
-            <PiggyBank className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600 group-hover:scale-110 transition-transform duration-300" />
+          <div className="p-1.5 xs:p-2 rounded-full bg-yellow-100 group-hover:bg-yellow-200 transition-colors duration-300">
+            <PiggyBank className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 text-yellow-600 group-hover:scale-110 transition-transform duration-300" />
           </div>
-          <span className="text-xs sm:text-sm font-medium capitalize group-hover:text-yellow-700 transition-colors duration-300 text-center">Savings</span>
+          <span className="text-[10px] xs:text-xs sm:text-sm font-medium capitalize group-hover:text-yellow-700 transition-colors duration-300 text-center leading-tight">Savings</span>
         </Link>
         <Link 
           to="/Investment" 
-          className="group p-3 sm:p-4 bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center gap-2 transform hover:scale-105 hover:-translate-y-1 animate-slide-in-up"
+          className="group p-2 xs:p-3 sm:p-4 bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center gap-1 xs:gap-2 transform hover:scale-105 hover:-translate-y-1 animate-slide-in-up"
           style={{ animationDelay: '0.4s' }}
         >
-          <div className="p-2 rounded-full bg-purple-100 group-hover:bg-purple-200 transition-colors duration-300">
-            <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 group-hover:scale-110 transition-transform duration-300" />
+          <div className="p-1.5 xs:p-2 rounded-full bg-purple-100 group-hover:bg-purple-200 transition-colors duration-300">
+            <TrendingUp className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 text-purple-600 group-hover:scale-110 transition-transform duration-300" />
           </div>
-          <span className="text-xs sm:text-sm font-medium capitalize group-hover:text-purple-700 transition-colors duration-300 text-center">Investments</span>
+          <span className="text-[10px] xs:text-xs sm:text-sm font-medium capitalize group-hover:text-purple-700 transition-colors duration-300 text-center leading-tight">Investments</span>
         </Link>
         <button 
-          className="group p-3 sm:p-4 bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center gap-2 transform hover:scale-105 hover:-translate-y-1 animate-slide-in-up"
+          className="group p-2 xs:p-3 sm:p-4 bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center gap-1 xs:gap-2 transform hover:scale-105 hover:-translate-y-1 animate-slide-in-up"
           style={{ animationDelay: '0.5s' }}
           onClick={() => {/* Add transfer modal logic here */}}
         >
-          <div className="p-2 rounded-full bg-indigo-100 group-hover:bg-indigo-200 transition-colors duration-300">
-            <ArrowRightLeft className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600 group-hover:scale-110 transition-transform duration-300" />
+          <div className="p-1.5 xs:p-2 rounded-full bg-indigo-100 group-hover:bg-indigo-200 transition-colors duration-300">
+            <ArrowRightLeft className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 text-indigo-600 group-hover:scale-110 transition-transform duration-300" />
           </div>
-          <span className="text-xs sm:text-sm font-medium capitalize group-hover:text-indigo-700 transition-colors duration-300 text-center">Transfer</span>
+          <span className="text-[10px] xs:text-xs sm:text-sm font-medium capitalize group-hover:text-indigo-700 transition-colors duration-300 text-center leading-tight">Transfer</span>
         </button>
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 animate-slide-in-up">
+      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 animate-slide-in-up">
         {statCards.map((card, index) => (
           <div 
             key={card.id}
-            className="bg-white rounded-xl p-4 sm:p-6 shadow-sm hover:shadow-lg transition-all duration-300 group animate-fade-in"
+            className="bg-white rounded-xl p-3 sm:p-4 md:p-6 shadow-sm hover:shadow-lg transition-all duration-300 group animate-fade-in"
             style={{ animationDelay: `${index * 0.1}s` }}
           >
-            <div className="flex items-center justify-between mb-4">
-              <div className={`p-2 rounded-lg ${
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <div className={`p-1.5 sm:p-2 rounded-lg ${
                 card.color === 'green' ? 'bg-green-100 text-green-600' :
                 card.color === 'blue' ? 'bg-blue-100 text-blue-600' :
                 card.color === 'purple' ? 'bg-purple-100 text-purple-600' :
@@ -577,23 +577,23 @@ const UserDashboard = () => {
               } group-hover:scale-110 transition-transform duration-300`}>
                 {getIconComponent(card.icon_name)}
               </div>
-              <div className={`flex items-center text-sm font-medium ${
+              <div className={`flex items-center text-xs sm:text-sm font-medium ${
                 card.change_type === 'positive' ? 'text-green-600' : 
                 card.change_type === 'negative' ? 'text-red-600' : 'text-gray-600'
               }`}>
                 {card.change_type === 'positive' ? (
-                  <ArrowUpRight className="w-4 h-4 mr-1" />
+                  <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                 ) : card.change_type === 'negative' ? (
-                  <ArrowDownRight className="w-4 h-4 mr-1" />
+                  <ArrowDownRight className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                 ) : null}
                 {Math.abs(card.change_value)}%
               </div>
             </div>
             <div className="space-y-1">
-              <h3 className="text-sm font-medium text-gray-600 group-hover:text-gray-800 transition-colors duration-300">
+              <h3 className="text-xs sm:text-sm font-medium text-gray-600 group-hover:text-gray-800 transition-colors duration-300">
                 {card.title}
               </h3>
-              <p className="text-xl sm:text-2xl font-bold text-gray-900 group-hover:text-primary-700 transition-colors duration-300">
+              <p className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 group-hover:text-primary-700 transition-colors duration-300 break-all">
                 {card.value}
               </p>
             </div>
@@ -602,21 +602,21 @@ const UserDashboard = () => {
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
         {/* Left Column - Accounts & Balance */}
-        <div className="xl:col-span-2 space-y-4 sm:space-y-6">
+        <div className="xl:col-span-2 space-y-3 sm:space-y-4 md:space-y-6">
           {/* Total Balance Card */}
-          <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl p-4 sm:p-6 text-white animate-slide-in-up shadow-xl hover:shadow-2xl transition-all duration-500">
-            <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+          <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl p-3 sm:p-4 md:p-6 text-white animate-slide-in-up shadow-xl hover:shadow-2xl transition-all duration-500">
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-4">
               <div className="animate-fade-in flex-1 min-w-0">
-                <p className="text-primary-100 font-medium text-sm sm:text-base">Total Balance</p>
-                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mt-1 animate-count-up break-all">${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h2>
+                <p className="text-primary-100 font-medium text-xs sm:text-sm md:text-base">Total Balance</p>
+                <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mt-1 animate-count-up break-all">${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h2>
               </div>
-              <div className="bg-white/10 p-2 rounded-lg animate-pulse-slow flex-shrink-0">
-                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6" />
+              <div className="bg-white/10 p-1.5 sm:p-2 rounded-lg animate-pulse-slow flex-shrink-0">
+                <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
               </div>
             </div>
-            <div className="mt-4 animate-fade-in-delay hover:animate-chart-hover transition-all duration-300">
+            <div className="mt-3 sm:mt-4 animate-fade-in-delay hover:animate-chart-hover transition-all duration-300">
               <Line data={chartData} options={chartOptions} />
             </div>
           </div>
@@ -730,95 +730,199 @@ const UserDashboard = () => {
             </div>
           </div>
 
-          {/* Financial Goals */}
-          <div className="bg-white rounded-xl shadow-sm overflow-hidden animate-slide-in-right hover:shadow-lg transition-all duration-300">
-            <div className="p-3 sm:p-4 border-b flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-              <h2 className="text-base sm:text-lg font-semibold text-gray-900">Financial Goals</h2>
-              <Link to="/goals" className="text-sm text-primary-600 hover:text-primary-700 font-medium transition-colors duration-200">
-                View All
-              </Link>
+          {/* Financial Goals - Redesigned */}
+          <div className="bg-gradient-to-br from-white via-white to-primary-50/30 rounded-xl shadow-sm overflow-hidden animate-slide-in-right hover:shadow-lg transition-all duration-300 border border-primary-100/50">
+            <div className="p-3 sm:p-4 border-b border-primary-100/50 bg-gradient-to-r from-primary-50/50 to-transparent">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-primary-100">
+                    <Target className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600" />
+                  </div>
+                  <h2 className="text-base sm:text-lg font-semibold text-gray-900">Financial Goals</h2>
+                </div>
+                <Link to="/goals" className="text-sm text-primary-600 hover:text-primary-700 font-medium transition-colors duration-200 flex items-center gap-1">
+                  View All
+                  <ArrowUpRight className="w-3 h-3" />
+                </Link>
+              </div>
             </div>
-            <div className="p-3 sm:p-4 space-y-3 sm:space-y-4">
-              {goals.map((goal, index) => {
-                const progressPercentage = getProgressPercentage(goal.current, goal.target);
-                const isCompleted = isGoalCompleted(goal.current, goal.target);
-                
-                return (
-                  <div 
-                    key={goal.id} 
-                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-slide-in-up group cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-all duration-300" 
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                    onClick={() => handleGoalClick(goal)}
-                  >
-                    <div className="flex items-center gap-2 sm:gap-3 group-hover:translate-x-1 transition-transform duration-300 flex-1 min-w-0">
-                      <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0 ${
-                        isCompleted ? 'bg-green-100' : 'bg-primary-100'
-                      }`}>
-                        {isCompleted ? (
-                          <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
-                        ) : (
-                          <Target className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600" />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <h3 className={`font-medium capitalize group-hover:text-primary-700 transition-colors duration-300 text-sm sm:text-base truncate ${
-                            isCompleted ? 'text-green-700' : 'text-gray-900'
-                          }`}>
-                            {goal.title}
-                          </h3>
-                          {isCompleted && (
-                            <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">
-                              Completed!
+            
+            <div className="p-3 sm:p-4 space-y-4">
+              {goals.length > 0 && (
+                <div className="bg-gradient-to-r from-primary-50 to-primary-100/50 rounded-lg p-3 mb-4 border border-primary-200/50">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-full bg-primary-500 flex items-center justify-center">
+                      <span className="text-white text-xs font-bold">🎯</span>
+                    </div>
+                    <p className="text-sm text-primary-800 font-medium">
+                      You're making great progress on {goals.filter(g => !isGoalCompleted(g.current, g.target)).length} active goal{goals.filter(g => !isGoalCompleted(g.current, g.target)).length !== 1 ? 's' : ''}!
+                    </p>
+                  </div>
+                </div>
+              )}
+              
+              {goals.length === 0 ? (
+                <div className="text-center py-8">
+                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center animate-pulse-slow">
+                    <Target className="w-10 h-10 text-primary-600" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Start Your Financial Journey</h3>
+                  <p className="text-sm text-gray-500 mb-4 max-w-sm mx-auto">
+                    Set your first financial goal and track your progress towards achieving your dreams.
+                  </p>
+                  <Link to="/goals" className="btn btn-primary btn-sm inline-flex items-center gap-2">
+                    <Target className="w-4 h-4" />
+                    Create Your First Goal
+                  </Link>
+                </div>
+              ) : (
+                goals.map((goal, index) => {
+                  const progressPercentage = getProgressPercentage(goal.current, goal.target);
+                  const isCompleted = isGoalCompleted(goal.current, goal.target);
+                  const remainingAmount = goal.target - goal.current;
+                  const daysUntilDeadline = Math.ceil((new Date(goal.deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                  
+                  return (
+                    <div 
+                      key={goal.id} 
+                      className="group cursor-pointer animate-slide-in-up" 
+                      style={{ animationDelay: `${index * 0.1}s` }}
+                      onClick={() => handleGoalClick(goal)}
+                    >
+                      <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-gray-100 hover:border-primary-200 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+                        {/* Goal Header */}
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 ${
+                              isCompleted 
+                                ? 'bg-gradient-to-br from-green-100 to-green-200' 
+                                : 'bg-gradient-to-br from-primary-100 to-primary-200'
+                            }`}>
+                              {isCompleted ? (
+                                <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                              ) : (
+                                <Target className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h3 className={`font-semibold text-sm sm:text-base group-hover:text-primary-700 transition-colors duration-300 truncate ${
+                                  isCompleted ? 'text-green-700' : 'text-gray-900'
+                                }`}>
+                                  {goal.title}
+                                </h3>
+                                {isCompleted && (
+                                  <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
+                                    ✓ Done
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-xs text-gray-500">
+                                Due {new Date(goal.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                {daysUntilDeadline > 0 && !isCompleted && (
+                                  <span className="ml-2 text-orange-600 font-medium">
+                                    ({daysUntilDeadline} days left)
+                                  </span>
+                                )}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          {/* Progress Circle */}
+                          <div className="relative w-12 h-12 sm:w-14 sm:h-14 group-hover:scale-110 transition-transform duration-300">
+                            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                              <path
+                                className="text-gray-200"
+                                stroke="currentColor"
+                                strokeWidth="3"
+                                fill="none"
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                              />
+                              <path
+                                className={isCompleted ? 'text-green-500' : 'text-primary-500'}
+                                stroke="currentColor"
+                                strokeWidth="3"
+                                fill="none"
+                                strokeLinecap="round"
+                                strokeDasharray={`${progressPercentage}, 100`}
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                style={{
+                                  transition: 'stroke-dasharray 1.5s ease-out',
+                                  filter: isCompleted ? 'drop-shadow(0 0 4px rgba(16, 185, 129, 0.3))' : 'drop-shadow(0 0 4px rgba(79, 70, 229, 0.3))'
+                                }}
+                              />
+                            </svg>
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <span className="text-xs font-bold text-gray-700">
+                                {Math.round(progressPercentage)}%
+                              </span>
+                            </div>
+                            {isCompleted && (
+                              <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                                <CheckCircle className="w-2.5 h-2.5 text-white" />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Progress Bar */}
+                        <div className="mb-3">
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-xs font-medium text-gray-600">Progress</span>
+                            <span className="text-xs font-semibold text-gray-900">
+                              ${goal.current.toLocaleString()} / ${goal.target.toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden relative">
+                            <div 
+                              className={`h-2 rounded-full transition-all duration-700 ease-out relative ${
+                                isCompleted 
+                                  ? 'bg-gradient-to-r from-green-400 to-green-500' 
+                                  : 'bg-gradient-to-r from-primary-400 to-primary-500'
+                              }`}
+                              style={{ width: `${progressPercentage}%` }}
+                            >
+                              {!isCompleted && progressPercentage > 0 && (
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-goal-shimmer rounded-full"></div>
+                              )}
+                            </div>
+                            {isCompleted && (
+                              <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-green-500/20 rounded-full animate-pulse"></div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Goal Details */}
+                        <div className="flex items-center justify-between text-xs">
+                          <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-1">
+                              <div className="w-2 h-2 rounded-full bg-primary-500"></div>
+                              <span className="text-gray-600">Saved</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <div className="w-2 h-2 rounded-full bg-gray-300"></div>
+                              <span className="text-gray-600">Remaining</span>
+                            </div>
+                          </div>
+                          {!isCompleted && remainingAmount > 0 && (
+                            <span className="text-orange-600 font-medium">
+                              ${remainingAmount.toLocaleString()} to go
                             </span>
                           )}
                         </div>
-                        <p className="text-xs sm:text-sm text-gray-500 font-medium">
-                          ${goal.current.toLocaleString()} / ${goal.target.toLocaleString()}
-                        </p>
-                        <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1">
-                          <div 
-                            className={`h-1.5 rounded-full transition-all duration-500 ${
-                              isCompleted ? 'bg-green-500' : 'bg-primary-600'
-                            }`}
-                            style={{ width: `${progressPercentage}%` }}
-                          />
+
+                        {/* Action Button */}
+                        <div className="mt-3 pt-3 border-t border-gray-100">
+                          <button className="w-full text-xs font-medium text-primary-600 hover:text-primary-700 py-2 rounded-lg hover:bg-primary-50 transition-all duration-200 flex items-center justify-center gap-1">
+                            {isCompleted ? 'View Details' : 'Add Money'}
+                            <ArrowUpRight className="w-3 h-3" />
+                          </button>
                         </div>
-                        <p className="text-xs text-gray-400 mt-1">
-                          {progressPercentage.toFixed(1)}% complete
-                        </p>
                       </div>
                     </div>
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 group-hover:scale-110 transition-transform duration-300 flex-shrink-0 mx-auto sm:mx-0 relative">
-                      <Doughnut
-                        data={{
-                          labels: ['Progress', 'Remaining'],
-                          datasets: [
-                            {
-                              data: [goal.current, Math.max(goal.target - goal.current, 0)],
-                              backgroundColor: isCompleted ? ['#10B981', '#E5E7EB'] : ['#4F46E5', '#E5E7EB'],
-                              borderWidth: 0,
-                            },
-                          ],
-                        }}
-                        options={{
-                          cutout: '80%',
-                          plugins: {
-                            legend: {
-                              display: false,
-                            },
-                          },
-                        }}
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-xs font-semibold text-gray-600">
-                          {Math.round(progressPercentage)}%
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })
+              )}
             </div>
           </div>
 

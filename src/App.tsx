@@ -19,6 +19,7 @@ import AdminAccounts from './pages/admin/Accounts';
 import AdminTransactions from './pages/admin/Transactions';
 import AdminCards from './pages/admin/Cards';
 import AdminFinancialGoals from './pages/admin/FinancialGoals';
+import AdminBulkUpload from './pages/admin/BulkUpload';
 import UserLayout from './components/layouts/UserLayout';
 import AdminLayout from './components/layouts/AdminLayout';
 import AuthLayout from './components/layouts/AuthLayout';
@@ -322,6 +323,7 @@ function App() {
           <Route path="/admin/accounts" element={<AdminAccounts />} />
           <Route path="/admin/cards" element={<AdminCards />} />
           <Route path="/admin/transactions" element={<AdminTransactions />} />
+          <Route path="/admin/bulk-upload" element={<AdminBulkUpload />} />
           <Route path="/admin/notifications" element={<AdminNotifications />} />
           <Route path="/admin/statistics-cards" element={<StatisticsCards />} />
           <Route path="/admin/upcoming-bills" element={<UpcomingBills />} />

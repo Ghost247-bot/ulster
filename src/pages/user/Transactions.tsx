@@ -256,44 +256,44 @@ const Transactions = () => {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6 px-4 sm:px-6 lg:px-8 max-w-[2000px] mx-auto">
+    <div className="space-y-3 sm:space-y-4 md:space-y-6">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-slide-in-up">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 animate-slide-in-up">
         <div className="flex-1 min-w-0">
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 animate-fade-in">Transactions</h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-1 animate-fade-in-delay">View and manage your transaction history</p>
+          <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 animate-fade-in">Transactions</h1>
+          <p className="text-xs sm:text-sm md:text-base text-gray-600 mt-1 animate-fade-in-delay">View and manage your transaction history</p>
         </div>
         <div className="flex flex-wrap gap-2 animate-slide-in-right w-full sm:w-auto">
           <button 
-            className="btn btn-outline flex items-center justify-center transform hover:scale-105 transition-all duration-200 hover:shadow-md w-full sm:w-auto"
+            className="btn btn-outline flex items-center justify-center transform hover:scale-105 transition-all duration-200 hover:shadow-md w-full sm:w-auto text-xs sm:text-sm md:text-base px-3 sm:px-4 py-2"
             onClick={exportTransactions}
             disabled={filteredTransactions.length === 0}
           >
-            <Download className="w-4 h-4 mr-1" />
+            <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
             Export
           </button>
         </div>
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
-        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.1s' }}>
-          <h3 className="text-xs sm:text-sm font-medium text-gray-500">Total Deposits</h3>
-          <p className="text-lg sm:text-xl lg:text-2xl font-bold text-green-600 animate-count-up break-all">${stats.totalDeposits.toFixed(2)}</p>
+      <div className="grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-4 gap-2 xs:gap-3 sm:gap-4">
+        <div className="bg-white rounded-lg shadow-md p-2 xs:p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.1s' }}>
+          <h3 className="text-[10px] xs:text-xs sm:text-sm font-medium text-gray-500">Total Deposits</h3>
+          <p className="text-sm xs:text-lg sm:text-xl lg:text-2xl font-bold text-green-600 animate-count-up break-all">${stats.totalDeposits.toFixed(2)}</p>
         </div>
-        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.2s' }}>
-          <h3 className="text-xs sm:text-sm font-medium text-gray-500">Total Withdrawals</h3>
-          <p className="text-lg sm:text-xl lg:text-2xl font-bold text-red-600 animate-count-up break-all">${stats.totalWithdrawals.toFixed(2)}</p>
+        <div className="bg-white rounded-lg shadow-md p-2 xs:p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.2s' }}>
+          <h3 className="text-[10px] xs:text-xs sm:text-sm font-medium text-gray-500">Total Withdrawals</h3>
+          <p className="text-sm xs:text-lg sm:text-xl lg:text-2xl font-bold text-red-600 animate-count-up break-all">${stats.totalWithdrawals.toFixed(2)}</p>
         </div>
-        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.3s' }}>
-          <h3 className="text-xs sm:text-sm font-medium text-gray-500">Net Amount</h3>
-          <p className={`text-lg sm:text-xl lg:text-2xl font-bold animate-count-up break-all ${stats.netAmount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+        <div className="bg-white rounded-lg shadow-md p-2 xs:p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.3s' }}>
+          <h3 className="text-[10px] xs:text-xs sm:text-sm font-medium text-gray-500">Net Amount</h3>
+          <p className={`text-sm xs:text-lg sm:text-xl lg:text-2xl font-bold animate-count-up break-all ${stats.netAmount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
             ${stats.netAmount.toFixed(2)}
           </p>
         </div>
-        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.4s' }}>
-          <h3 className="text-xs sm:text-sm font-medium text-gray-500">Transaction Count</h3>
-          <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 animate-count-up">{stats.transactionCount}</p>
+        <div className="bg-white rounded-lg shadow-md p-2 xs:p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.4s' }}>
+          <h3 className="text-[10px] xs:text-xs sm:text-sm font-medium text-gray-500">Transaction Count</h3>
+          <p className="text-sm xs:text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 animate-count-up">{stats.transactionCount}</p>
         </div>
       </div>
 

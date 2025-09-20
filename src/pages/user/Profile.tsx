@@ -178,29 +178,29 @@ const Profile = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Profile</h1>
-          <p className="text-gray-600 mt-1">Manage your account settings and preferences</p>
+          <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">Profile</h1>
+          <p className="text-xs sm:text-sm md:text-base text-gray-600 mt-1">Manage your account settings and preferences</p>
         </div>
       </div>
 
       {/* Profile Details Card */}
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-          <h2 className="text-lg font-medium text-gray-900">Personal Information</h2>
+        <div className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 border-b border-gray-200 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+          <h2 className="text-base sm:text-lg font-medium text-gray-900">Personal Information</h2>
           {!isEditing && (
             <button
               onClick={() => setIsEditing(true)}
-              className="btn btn-outline text-sm"
+              className="btn btn-outline text-xs sm:text-sm px-3 sm:px-4 py-2 w-full sm:w-auto"
             >
               Edit Profile
             </button>
           )}
         </div>
-        <div className="p-6">
+        <div className="p-3 sm:p-4 md:p-6">
           {!isEditing ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">

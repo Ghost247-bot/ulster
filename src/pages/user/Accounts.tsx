@@ -404,73 +404,73 @@ const UserAccounts = () => {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6 px-4 sm:px-6 lg:px-8 max-w-[2000px] mx-auto">
+    <div className="space-y-3 sm:space-y-4 md:space-y-6">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 sm:pt-6 animate-slide-in-up">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 animate-slide-in-up">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 animate-fade-in">Your Accounts</h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-1 animate-fade-in-delay">Manage your accounts and view transactions</p>
+          <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 animate-fade-in">Your Accounts</h1>
+          <p className="text-xs sm:text-sm md:text-base text-gray-600 mt-1 animate-fade-in-delay">Manage your accounts and view transactions</p>
         </div>
         <div className="flex flex-wrap gap-2 w-full sm:w-auto animate-slide-in-right">
           <Link
             to="/accounts/new"
-            className="btn btn-primary flex items-center w-full sm:w-auto justify-center transform hover:scale-105 transition-all duration-200 hover:shadow-lg"
+            className="btn btn-primary flex items-center w-full sm:w-auto justify-center transform hover:scale-105 transition-all duration-200 hover:shadow-lg text-xs sm:text-sm md:text-base px-3 sm:px-4 py-2"
           >
-            <PlusCircle className="w-4 h-4 mr-1" />
+            <PlusCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
             New Account
           </Link>
         </div>
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
-        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.1s' }}>
+      <div className="grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-4 gap-2 xs:gap-3 sm:gap-4">
+        <div className="bg-white rounded-lg shadow-md p-2 xs:p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.1s' }}>
           <div className="flex items-center">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-              <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600" />
+            <div className="w-6 h-6 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-full bg-primary-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+              <DollarSign className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 text-primary-600" />
             </div>
-            <div className="ml-3 flex-1 min-w-0">
-              <p className="text-xs sm:text-sm text-gray-500">Total Balance</p>
-              <p className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 animate-count-up break-all">
+            <div className="ml-2 xs:ml-3 flex-1 min-w-0">
+              <p className="text-[10px] xs:text-xs sm:text-sm text-gray-500">Total Balance</p>
+              <p className="text-xs xs:text-sm sm:text-base lg:text-lg font-semibold text-gray-900 animate-count-up break-all">
                 ${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.2s' }}>
+        <div className="bg-white rounded-lg shadow-md p-2 xs:p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.2s' }}>
           <div className="flex items-center">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-success-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-              <PlusCircle className="w-4 h-4 sm:w-5 sm:h-5 text-success-600" />
+            <div className="w-6 h-6 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-full bg-success-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+              <PlusCircle className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 text-success-600" />
             </div>
-            <div className="ml-3 flex-1 min-w-0">
-              <p className="text-xs sm:text-sm text-gray-500">Active Accounts</p>
-              <p className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 animate-count-up">
+            <div className="ml-2 xs:ml-3 flex-1 min-w-0">
+              <p className="text-[10px] xs:text-xs sm:text-sm text-gray-500">Active Accounts</p>
+              <p className="text-xs xs:text-sm sm:text-base lg:text-lg font-semibold text-gray-900 animate-count-up">
                 {accounts.filter(a => !a.is_frozen).length}
               </p>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.3s' }}>
+        <div className="bg-white rounded-lg shadow-md p-2 xs:p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.3s' }}>
           <div className="flex items-center">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-error-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-              <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-error-600" />
+            <div className="w-6 h-6 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-full bg-error-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+              <Lock className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 text-error-600" />
             </div>
-            <div className="ml-3 flex-1 min-w-0">
-              <p className="text-xs sm:text-sm text-gray-500">Frozen Accounts</p>
-              <p className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 animate-count-up">
+            <div className="ml-2 xs:ml-3 flex-1 min-w-0">
+              <p className="text-[10px] xs:text-xs sm:text-sm text-gray-500">Frozen Accounts</p>
+              <p className="text-xs xs:text-sm sm:text-base lg:text-lg font-semibold text-gray-900 animate-count-up">
                 {accounts.filter(a => a.is_frozen).length}
               </p>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.4s' }}>
+        <div className="bg-white rounded-lg shadow-md p-2 xs:p-3 sm:p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-slide-in-up group" style={{ animationDelay: '0.4s' }}>
           <div className="flex items-center">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-              <Download className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
+            <div className="w-6 h-6 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-full bg-blue-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+              <Download className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 text-blue-600" />
             </div>
-            <div className="ml-3 flex-1 min-w-0">
-              <p className="text-xs sm:text-sm text-gray-500">Recent Transactions</p>
-              <p className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 animate-count-up">
+            <div className="ml-2 xs:ml-3 flex-1 min-w-0">
+              <p className="text-[10px] xs:text-xs sm:text-sm text-gray-500">Recent Transactions</p>
+              <p className="text-xs xs:text-sm sm:text-base lg:text-lg font-semibold text-gray-900 animate-count-up">
                 {recentTransactions.length}
               </p>
             </div>

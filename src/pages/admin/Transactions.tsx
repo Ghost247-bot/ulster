@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { ChevronDown, Edit, Plus, Search, Trash2 } from 'lucide-react';
+import { ChevronDown, Edit, Plus, Search, Trash2, Upload } from 'lucide-react';
 import { format } from 'date-fns';
 import Loading from '../../components/ui/Loading';
 import toast from 'react-hot-toast';
+import BulkTransactionUpload from '../../components/admin/BulkTransactionUpload';
 
 interface Transaction {
   id: number;
@@ -47,6 +48,7 @@ const AdminTransactions = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [formData, setFormData] = useState<Partial<Transaction>>({});
   const [selectedAccountId, setSelectedAccountId] = useState<number | null>(null);
+  const [showBulkUpload, setShowBulkUpload] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -359,14 +361,30 @@ const AdminTransactions = () => {
           <h1 className="text-2xl font-bold text-gray-900">Transactions</h1>
           <p className="text-gray-600 mt-1">Manage and view transaction history</p>
         </div>
-        <button
-          onClick={openCreateModal}
-          className="btn btn-primary flex items-center"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          New Transaction
-        </button>
+        <div className="flex space-x-3">
+          <button
+            onClick={() => setShowBulkUpload(!showBulkUpload)}
+            className="btn btn-outline flex items-center"
+          >
+            <Upload className="w-4 h-4 mr-2" />
+            Bulk Upload
+          </button>
+          <button
+            onClick={openCreateModal}
+            className="btn btn-primary flex items-center"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            New Transaction
+          </button>
+        </div>
       </div>
+
+      {/* Bulk Upload Section */}
+      {showBulkUpload && (
+        <div className="mb-6">
+          <BulkTransactionUpload />
+        </div>
+      )}
 
       {/* Search and Filters */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
