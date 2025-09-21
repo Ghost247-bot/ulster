@@ -308,17 +308,16 @@ export const getStockData = async (symbols: string[] = DEFAULT_SYMBOLS): Promise
   
   // Check cache first
   if (stockDataCache[cacheKey] && (now - stockDataCache[cacheKey].timestamp) < CACHE_DURATION) {
-    console.log('Returning cached stock data');
+    // Cache hit - return cached data silently
     return stockDataCache[cacheKey].data;
   }
 
+  // Cache miss - fetch fresh data
   console.log('Fetching fresh stock data for symbols:', symbols);
 
   // For now, let's use mock data directly to ensure the UI works
   // In production, you would want to implement proper API calls
-  console.log('Using mock data for demonstration');
   const mockData = MOCK_DATA.filter(stock => symbols.includes(stock.symbol));
-  console.log('Using mock data for symbols:', symbols, 'Found:', mockData.length, 'stocks');
   
   // Cache the mock data
   stockDataCache[cacheKey] = {

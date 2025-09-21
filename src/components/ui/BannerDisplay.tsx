@@ -57,8 +57,8 @@ const BannerDisplay: React.FC = () => {
     }) || [];
 
     setBanners(userBanners);
-    // Initialize all banners as minimized
-    setMinimizedBanners(userBanners.map(banner => banner.id));
+    // Initialize all banners as expanded (not minimized)
+    setMinimizedBanners([]);
   }
 
   const dismissBanner = (bannerId: string) => {
@@ -66,11 +66,20 @@ const BannerDisplay: React.FC = () => {
   };
 
   const toggleMinimize = (bannerId: string) => {
+    console.log('Toggling banner:', bannerId);
     setMinimizedBanners(prev => {
-      if (prev.includes(bannerId)) {
-        return prev.filter(id => id !== bannerId);
+      const isCurrentlyMinimized = prev.includes(bannerId);
+      console.log('Banner is currently minimized:', isCurrentlyMinimized);
+      
+      if (isCurrentlyMinimized) {
+        const newState = prev.filter(id => id !== bannerId);
+        console.log('Expanding banner, new state:', newState);
+        return newState;
+      } else {
+        const newState = [...prev, bannerId];
+        console.log('Minimizing banner, new state:', newState);
+        return newState;
       }
-      return [...prev, bannerId];
     });
   };
 
@@ -83,11 +92,18 @@ const BannerDisplay: React.FC = () => {
       {visibleBanners.map(banner => (
         <div
           key={banner.id}
-          className="relative bg-red-50 border border-red-100 rounded-lg shadow-sm overflow-hidden"
+          className="relative bg-red-50 border border-red-100 rounded-lg shadow-sm overflow-hidden cursor-pointer hover:bg-red-100 transition-colors duration-200"
+          onClick={(e) => {
+            console.log('Banner clicked:', banner.id);
+            toggleMinimize(banner.id);
+          }}
         >
           <div className="absolute top-1.5 right-1.5 flex items-center gap-1.5">
             <button
-              onClick={() => toggleMinimize(banner.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleMinimize(banner.id);
+              }}
               className="text-red-400 hover:text-red-600"
             >
               {minimizedBanners.includes(banner.id) ? (
@@ -97,7 +113,10 @@ const BannerDisplay: React.FC = () => {
               )}
             </button>
             <button
-              onClick={() => dismissBanner(banner.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                dismissBanner(banner.id);
+              }}
               className="text-red-400 hover:text-red-600"
             >
               <X className="w-4 h-4" />

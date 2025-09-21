@@ -51,16 +51,20 @@ export const useStockData = ({
 
   const refresh = useCallback(() => fetchData(true), [fetchData]);
 
+  // Separate effect for initial fetch and auto-refresh setup
   useEffect(() => {
-    // Initial fetch
     fetchData();
+  }, [symbols]); // Only depend on symbols for initial fetch
 
-    // Set up auto-refresh if enabled
-    if (autoRefresh) {
-      const interval = setInterval(() => fetchData(), refreshInterval);
-      return () => clearInterval(interval);
-    }
-  }, [fetchData, autoRefresh, refreshInterval]);
+  useEffect(() => {
+    if (!autoRefresh) return;
+    
+    const interval = setInterval(() => {
+      fetchData();
+    }, refreshInterval);
+    
+    return () => clearInterval(interval);
+  }, [autoRefresh, refreshInterval, fetchData]);
 
   return {
     stockData,
