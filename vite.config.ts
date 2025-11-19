@@ -11,7 +11,19 @@ export default defineConfig({
   envPrefix: 'VITE_',
   // Enable source maps for better debugging
   build: {
-    sourcemap: true
+    sourcemap: true,
+    outDir: 'dist',
+    assetsDir: 'assets',
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'chart-vendor': ['chart.js', 'react-chartjs-2'],
+          'supabase-vendor': ['@supabase/supabase-js']
+        }
+      }
+    }
   },
   // Server configuration to handle potential blocking issues
   server: {

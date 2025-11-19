@@ -33,7 +33,22 @@ npm install
 npm run dev
 ```
 
-The application will be available at `http://localhost:5175`
+The application will be available at `http://localhost:5174`
+
+## Deployment
+
+### Vercel Deployment
+
+This project is configured for deployment on Vercel. See [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md) for detailed deployment instructions.
+
+**Quick Deploy:**
+
+1. Push your code to GitHub/GitLab/Bitbucket
+2. Import the project in [Vercel](https://vercel.com)
+3. Add environment variables in Vercel dashboard
+4. Deploy!
+
+The live application is available at [ulster-beta.vercel.app](https://ulster-beta.vercel.app)
 
 ## Technologies Used
 
